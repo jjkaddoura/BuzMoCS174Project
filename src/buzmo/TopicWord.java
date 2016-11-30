@@ -4,11 +4,14 @@
  * and open the template in the editor.
  */
 package buzmo;
-
+import java.lang.*;
 /**
  *
  * @author jacob
  */
 public class TopicWord {
-    
+    String keyword;
+    TopicWord(String keyword) {
+        this.keyword = keyword;
+    }
 }
