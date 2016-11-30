@@ -5,13 +5,15 @@
  */
 package buzmo;
 import java.lang.*;
+import java.util.*;
 /**
  *
  * @author jacob
  */
 public class TopicWord {
-    String keyword;
-    TopicWord(String keyword) {
-        this.keyword = keyword;
-    }
+  private String keyword;
+
+  TopicWord(String keyword) {
+    this.keyword = keyword;
+  }
 }
