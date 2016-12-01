@@ -8,8 +8,8 @@ public class TestOracle {
 
       Class.forName("oracle.jdbc.driver.OracleDriver");
       String url = "jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe";
-			String username = "jmangel";
-			String password = "514";
+			String username = "jjkaddoura";
+			String password = "432";
       Connection con = DriverManager.getConnection(url,username, password);
       Statement st = con.createStatement();
       String sql = "WRITE YOUR QUERY HERE";
