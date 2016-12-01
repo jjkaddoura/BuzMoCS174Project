@@ -21,7 +21,12 @@
   </target>
 
   <target name="run" depends="compile" description="Run the BuzMo application">
-    <java classname="buzmo.BuzMo" classpath="build" />
+    <java fork="yes" classname="buzmo.BuzMo">
+      <classpath>
+        <pathelement location="build" />
+        <pathelement location="ojdbc6.jar" />
+      </classpath>
+    </java>
   </target>
 
   <target name="clean" description="Delete non-source files">

@@ -7,6 +7,7 @@ package buzmo;
 
 import java.util.*;
 import java.lang.*;
+import java.sql.*;
 
 /**
  *
@@ -16,18 +17,56 @@ public class BuzMo {
 
 	private static User currentUser;
 	private static Scanner scanner;
+   
+  private static String url = "jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe";
+  private static String username = "jmangel";
+  private static String password = "514";
+  private static Connection con;
 
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-  	scanner = new Scanner(System.in);
+    scanner = new Scanner(System.in);
+    //set up database connection
+    try{
+      Class.forName("oracle.jdbc.driver.OracleDriver"); 
+      con = DriverManager.getConnection(url,username, password);
+    } catch (Exception e){
+      System.out.println("ERROR: " + e);
+    }
+
 
   	System.out.println("Welcome to BuzMo!");
+
+    ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
+    try {
+      while(rs.next()){
+        System.out.println(rs.getString(6) + " " 
+          + rs.getString(1) + " " 
+          + rs.getString(2) + " "
+          + rs.getString(3) + " " 
+          + rs.getString(4) + " "
+          + (rs.getInt(5)==1 ? "Y" : "N"));
+      }
+    } catch (Exception e) {
+      System.out.println("ERROR: " + e);
+    }
+
+
     // TODO code application logic here
+
+
+    //close connection
+    try{
+      con.close();
+    } catch (Exception e){
+      System.out.println("ERROR closing connection: " + e);
+    }
+    
   }
 
-  private void promptLogin(){
+  private static void promptLogin(){
   	System.out.println("Email:");
   	String username = scanner.nextLine();
 
@@ -37,7 +76,7 @@ public class BuzMo {
   	//TODO validate
   }
 
-  private boolean setScreenname(String screenname){
+  private static boolean setScreenname(String screenname){
   	if (screenname.length() <= 20){
   		currentUser.setScreenname(screenname);
   		return true;
@@ -48,7 +87,7 @@ public class BuzMo {
   	}
   }
 
-  private void PostMessage(){
+  private static void PostMessage(){
   	String promptMessage = "What type of message do you want to post? Enter 1 for a private message, 2 for a message to a ChatGroup, 3 for a message to certain friends, 4 for a message to all friends, 5 for a public post.";
   	int messageType = -1;
 
@@ -81,7 +120,7 @@ public class BuzMo {
 		}
   }
 
-  private void PostPrivateMessage(){
+  private static void PostPrivateMessage(){
   	System.out.println("Enter recipient's email (or 0 to return to main menu):");
   	String email = scanner.nextLine();
   	if (email == "0") return;
@@ -89,7 +128,7 @@ public class BuzMo {
 
   }
 
-  private void PostChatGroupMessage(){
+  private static void PostChatGroupMessage(){
   	System.out.println("Enter ChatGroup name (or 0 to return to main menu):");
   	String groupName = scanner.nextLine();
   	if (groupName == "0") return;
@@ -99,19 +138,19 @@ public class BuzMo {
   	//TODO otherwise print error message
   }
 
-  private void PostCustomMessage(){
+  private static void PostCustomMessage(){
   	//TODO
   }
 
-  private void PostBroadcastMessage(boolean isPublic){
+  private static void PostBroadcastMessage(boolean isPublic){
   	//TODO
   }
 
-  private void deleteMessage(Message message){
+  private static void deleteMessage(Message message){
   	//TODO remove from database
   }
 
-  private ChatGroup createChatGroup(){
+  private static ChatGroup createChatGroup(){
   	System.out.println("Name your chatgroup:");
   	String groupName = scanner.nextLine();
 
@@ -130,7 +169,7 @@ public class BuzMo {
   	return chatGroup;
   }
 
-  private ChatGroup modifyChatGroup(){
+  private static ChatGroup modifyChatGroup(){
   	System.out.println("Which ChatGroup would you like to modify?");
   	String groupName = scanner.nextLine();
 
@@ -182,7 +221,23 @@ public class BuzMo {
   	
   }
   
-  private Friendship sendFriendRequest(){
+  private static Friendship sendFriendRequest(){
     //TODO make sure friend request doesn't exist either direction
+    return null;
+  }
+
+  private static ResultSet queryDatabase(String queryString){
+    try{
+      Statement st = con.createStatement();
+      
+      ResultSet rt = st.executeQuery(queryString);
+
+      return rt;
+      }
+    catch(Exception e){
+      System.out.println(e);
+    }
+
+    return null;
   }
 }
