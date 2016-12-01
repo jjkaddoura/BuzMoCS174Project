@@ -1,17 +1,26 @@
-DROP TABLE BroadcastMessage_Topic;
-DROP TABLE CustomMessage_Topic;
-DROP TABLE Message_Viewer;
-DROP TABLE CustomMessage;
-DROP TABLE PrivateMessage;
-DROP TABLE BroadcastMessage;
-DROP TABLE ChatGroupMessage;
-DROP TABLE ChatGroupInvite;
-DROP TABLE Group_Member;
-DROP TABLE ChatGroup;
-DROP TABLE UserProfile_Topic;
-DROP TABLE TopicWord;
-DROP TABLE Friendship;
-DROP TABLE UserProfile;
+DROP TRIGGER broadcastmessage_insert;
+DROP TRIGGER chatgroupmessage_insert;
+DROP TRIGGER privatemessage_insert;
+DROP TRIGGER custommessage_insert;
+DROP TRIGGER message_viewer_insert;
+DROP TRIGGER broadcastmessage_topic_insert;
+DROP TRIGGER custommessage_topic_insert;
+
+
+DROP TABLE BroadcastMessage_Topic CASCADE CONSTRAINTS;
+DROP TABLE CustomMessage_Topic CASCADE CONSTRAINTS;
+DROP TABLE Message_Viewer CASCADE CONSTRAINTS;
+DROP TABLE CustomMessage CASCADE CONSTRAINTS;
+DROP TABLE PrivateMessage CASCADE CONSTRAINTS;
+DROP TABLE BroadcastMessage CASCADE CONSTRAINTS;
+DROP TABLE ChatGroupMessage CASCADE CONSTRAINTS;
+DROP TABLE ChatGroupInvite CASCADE CONSTRAINTS;
+DROP TABLE Group_Member CASCADE CONSTRAINTS;
+DROP TABLE ChatGroup CASCADE CONSTRAINTS;
+DROP TABLE UserProfile_Topic CASCADE CONSTRAINTS;
+DROP TABLE TopicWord CASCADE CONSTRAINTS;
+DROP TABLE Friendship CASCADE CONSTRAINTS;
+DROP TABLE UserProfile CASCADE CONSTRAINTS;
 
 DROP SEQUENCE message_id_seq;
 
