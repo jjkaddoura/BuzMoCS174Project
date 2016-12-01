@@ -181,5 +181,8 @@ public class BuzMo {
   	return chatGroup;
   	
   }
-    
+  
+  private Friendship sendFriendRequest(){
+    //TODO make sure friend request doesn't exist either direction
+  }
 }

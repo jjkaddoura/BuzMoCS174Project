@@ -11,15 +11,15 @@ import java.util.*;
  * @author jacob
  */
 public abstract class Message {
-    private String timestamp;
-    private int m_id;
-    private String sender;
-    private String body;
+  private String timestamp;
+  private int m_id;
+  private String sender;
+  private String body;
 
-    Message(int m_id, String timestamp, String sender, String body){
-      this.m_id = m_id;
-      this.timestamp = timestamp;
-      this.sender = sender;
-      this.body = body;
-    }
+  Message(int m_id, String timestamp, String sender, String body){
+    this.m_id = m_id;
+    this.timestamp = timestamp;
+    this.sender = sender;
+    this.body = body;
+  }
 }
