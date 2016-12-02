@@ -25,7 +25,17 @@ public class BroadcastMessage extends MyCircleMessage{
 			this.isPublic = isPublic;
 		}
 		
-
-		public int getReadCount(){ return this.read_count; }
+    public int getReadCount(){ return this.read_count; }
+    @Override
+    String toString(){
+	String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
+	for(String topic : topics){
+	    o += ", topics: " + topic + ", ";
+	}
+	o += ", " + isPublic;
+	
+       
+	return o;
+    }
 		
 }
