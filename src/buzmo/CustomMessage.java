@@ -21,4 +21,17 @@ public class CustomMessage extends MyCircleMessage{
     super(timestamp, sender, body, topics);
     this.recipients = recipients;
   }
+     String ToString(){
+	String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
+	for(String topic : topics){
+	    o += ", topics: " + topic + ", ";
+	}
+	for(String rec : recipients){
+	    o += ", recipients: " + rec + ", ";
+	}
+       
+	return o;
+    }
+
+   
 }

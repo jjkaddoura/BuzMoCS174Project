@@ -10,11 +10,12 @@ import java.util.*;
  *
  * @author jacob
  */
-public abstract class Message {
-  private String timestamp;
-  private int m_id;
-  private String sender;
-  private String body;
+public class Message {
+ 
+  protected String timestamp;
+  protected int m_id;
+  protected String sender;
+  protected String body;
 
   Message(int m_id, String timestamp, String sender, String body){
     this.m_id = m_id;
@@ -27,4 +28,7 @@ public abstract class Message {
     this.sender = sender;
     this.body = body;
   }
+
+     
+    
 }

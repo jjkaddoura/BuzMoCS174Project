@@ -30,4 +30,10 @@ public class PrivateMessage extends Message {
 
     void deleteSenderCopy() { this.sender_copy_delete = true; }
     void deleteReceiverCopy() { this.receiver_copy_delete = true; }
+ 
+    String ToString(){
+	String o = 	o =  m_id  + ", " + timestamp + ", " + sender + ", " + body;
+	o =  o + ", " + receiver;
+	return o;
+    }
 }
