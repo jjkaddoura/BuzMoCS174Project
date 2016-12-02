@@ -9,12 +9,13 @@ import java.util.*;
 import java.lang.*;
 import java.sql.*;
 
+//import org.skife.jdbi.*;
+
 /**
  *
  * @author jacob
  */
 public class BuzMo {
-
 	private static User currentUser;
 	private static Scanner scanner;
    
@@ -28,42 +29,31 @@ public class BuzMo {
    */
   public static void main(String[] args) {
     scanner = new Scanner(System.in);
-    //set up database connection
-    try{
-      Class.forName("oracle.jdbc.driver.OracleDriver"); 
-      con = DriverManager.getConnection(url,username, password);
-    } catch (Exception e){
-      System.out.println("ERROR: " + e);
-    }
-
 
   	System.out.println("Welcome to BuzMo!");
 
-    ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
-    try {
-      while(rs.next()){
-        System.out.println(rs.getString(6) + " " 
-          + rs.getString(1) + " " 
-          + rs.getString(2) + " "
-          + rs.getString(3) + " " 
-          + rs.getString(4) + " "
-          + (rs.getInt(5)==1 ? "Y" : "N"));
+  	// Print all users REMOVE THIS CODE
+    ArrayList<Map<String, Object>> allUsers = getAllUsers();
+    for (Map user: allUsers){
+      // Print all column values
+      for (Object key: user.keySet()){
+        System.out.print(user.get(key) + " ");
       }
-    } catch (Exception e) {
-      System.out.println("ERROR: " + e);
+      System.out.println();
+
+      // Print only email
+      //System.out.println(user.get("EMAIL"));
     }
 
+    // Print Kevin Durant's friends REMOVE THIS CODE
+    currentUser = new User("Kevin Durant", "DurantKev@gmail.com", "password", false, null);
+    ArrayList<String> kevsFriends = getFriends();
+    for (String email: kevsFriends){
+      System.out.println(email);
+    }
 
     // TODO code application logic here
 
-
-    //close connection
-    try{
-      con.close();
-    } catch (Exception e){
-      System.out.println("ERROR closing connection: " + e);
-    }
-    
   }
 
   private static void promptLogin(){
@@ -226,7 +216,65 @@ public class BuzMo {
     return null;
   }
 
+  private static ArrayList<String> getFriends(){
+    if (currentUser == null) return null;
+    ArrayList<String> friends = new ArrayList<String>();
+
+    try{
+      Class.forName("oracle.jdbc.driver.OracleDriver"); 
+      con = DriverManager.getConnection(url,username, password);
+
+      ResultSet rs = queryDatabase("SELECT UserProfile.email, UserProfile.name FROM UserProfile" +
+                                   " JOIN Friendship ON UserProfile.email=Friendship.initiator" + 
+                                   " WHERE is_pending=0 AND receiver='" + currentUser.getEmail() + "'" +
+
+                                   " UNION SELECT UserProfile.email, UserProfile.name FROM UserProfile" +
+                                   " JOIN Friendship ON UserProfile.email=Friendship.receiver" + 
+                                   " WHERE is_pending=0 AND initiator='" + currentUser.getEmail() + "'");
+      while(rs.next()){
+        friends.add(rs.getString(1));
+      }
+
+      con.close();
+    } catch (Exception e) {
+      System.out.println("ERROR: " + e);
+    } 
+
+    return friends;
+  }
+
+  private static ArrayList<Map<String, Object>> getAllUsers(){
+    ArrayList<Map<String, Object>> users = new ArrayList<Map<String, Object>>();
+
+    try{
+      Class.forName("oracle.jdbc.driver.OracleDriver"); 
+      con = DriverManager.getConnection(url,username, password);
+
+      ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
+
+      ResultSetMetaData metaData = rs.getMetaData();
+      int columnCount = metaData.getColumnCount();
+
+      while (rs.next()) {
+        Map<String, Object> columns = new LinkedHashMap<String, Object>();
+
+        for (int i = 1; i <= columnCount; i++) {
+          columns.put(metaData.getColumnLabel(i), rs.getObject(i));
+        }
+
+        users.add(columns);
+      }
+
+      con.close();
+    } catch (Exception e) {
+      System.out.println("ERROR: " + e);
+    } 
+
+    return users;
+  }
+
   private static ResultSet queryDatabase(String queryString){
+    System.out.println(queryString);
     try{
       Statement st = con.createStatement();
       
@@ -235,7 +283,7 @@ public class BuzMo {
       return rt;
       }
     catch(Exception e){
-      System.out.println(e);
+      System.out.println("executeQuery ERROR: " + e);
     }
 
     return null;
