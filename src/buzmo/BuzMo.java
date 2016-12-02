@@ -426,6 +426,16 @@ public class BuzMo {
 		for (CustomMessage cm: customMessages){
 			System.out.println(cm.toString());
 		}
+
+		ArrayList<BroadcastMessage> broadcastMessages = getMySentBroadcastMessages();
+		for (BroadcastMessage bm: broadcastMessages){
+			System.out.println(bm.toString());
+		}
+
+		ArrayList<ChatGroupMessage> chatGroupMessages = getMySentChatGroupMessages();
+		for (ChatGroupMessage gm: chatGroupMessages){
+			System.out.println(gm.toString());
+		}
 		//TODO remove from database
 	}
 
@@ -567,6 +577,56 @@ public class BuzMo {
 			ResultSet rs = queryDatabase("SELECT m_id, time, received_by, body FROM PrivateMessage WHERE sent_by='" + currentUser.getEmail() + "' AND sender_copy_delete=0");
 			while(rs.next()){
 				messages.add(new PrivateMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4)));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return messages;
+	}
+
+	// Returns a list of my sent ChatGroupMessages
+	private static ArrayList<ChatGroupMessage> getMySentChatGroupMessages(){
+		ArrayList<ChatGroupMessage> messages = new ArrayList<ChatGroupMessage>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, body, gname FROM ChatGroupMessage WHERE sent_by='" + currentUser.getEmail() + "'");
+			while(rs.next()){
+				messages.add(new ChatGroupMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4)));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return messages;
+	}
+
+	// Returns a list of my sent BroadCastMessages
+	private static ArrayList<BroadcastMessage> getMySentBroadcastMessages(){
+		ArrayList<BroadcastMessage> messages = new ArrayList<BroadcastMessage>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, body, is_public FROM BroadCastMessage WHERE sent_by='" + currentUser.getEmail() + "'");
+			while(rs.next()){
+				String m_id = rs.getString(1);
+
+				ResultSet topicRs = queryDatabase("SELECT keyword FROM BroadcastMessage_Topic WHERE m_id=" + m_id);
+				ArrayList<String> topics = new ArrayList<String>();
+				while (topicRs.next()){
+					topics.add(topicRs.getString(1));
+				}
+
+				messages.add(new BroadcastMessage(Integer.parseInt(m_id), rs.getString(2), currentUser.getEmail(), rs.getString(3), topics, (rs.getInt(4) == 1 ? true : false) ));
 			}
 
 			con.close();

@@ -13,25 +13,25 @@ import java.util.*;
 public class CustomMessage extends MyCircleMessage{
 	private ArrayList<String> recipients;
 
-  CustomMessage(int m_id, String timestamp, String sender, String body, ArrayList<String> topics, ArrayList<String> recipients){
-    super(m_id, timestamp, sender, body, topics);
-    this.recipients = recipients;
-  }
-  CustomMessage(String timestamp, String sender, String body, ArrayList<String> topics, ArrayList<String> recipients){
-    super(timestamp, sender, body, topics);
-    this.recipients = recipients;
-  }
-     String ToString(){
-	String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
-	for(String topic : topics){
-	    o += ", topics: " + topic + ", ";
+	CustomMessage(int m_id, String timestamp, String sender, String body, ArrayList<String> topics, ArrayList<String> recipients){
+		super(m_id, timestamp, sender, body, topics);
+		this.recipients = recipients;
 	}
-	for(String rec : recipients){
-	    o += ", recipients: " + rec + ", ";
+	CustomMessage(String timestamp, String sender, String body, ArrayList<String> topics, ArrayList<String> recipients){
+		super(timestamp, sender, body, topics);
+		this.recipients = recipients;
 	}
-       
-	return o;
-    }
-
-   
+	
+	@Override
+	public String toString(){
+		String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
+		for(String topic : topics){
+			o += ", topics: " + topic + ", ";
+		}
+		for(String rec : recipients){
+			o += ", recipients: " + rec + ", ";
+		}
+			 
+		return o;
+	} 
 }

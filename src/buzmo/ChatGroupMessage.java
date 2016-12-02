@@ -12,13 +12,13 @@ import java.util.*;
  * @author John Mangel
  */
 public class ChatGroupMessage extends Message{
-	private ChatGroup chatGroup;
+	private String chatGroup;
 
-	ChatGroupMessage(int m_id, String timestamp, String sender, String body, ChatGroup chatGroup){
+	ChatGroupMessage(int m_id, String timestamp, String sender, String body, String chatGroup){
     super(m_id, timestamp, sender, body);
     this.chatGroup = chatGroup;
   }
-  ChatGroupMessage(String timestamp, String sender, String body, ChatGroup chatGroup){
+  ChatGroupMessage(String timestamp, String sender, String body, String chatGroup){
     super(timestamp, sender, body);
     this.chatGroup = chatGroup;
   }
