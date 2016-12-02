@@ -60,106 +60,85 @@ public class BuzMo {
 		boolean isManager = false; // DO A QUERY HERE TO SEE IF CUR_USER IS A MANAGER
 		int action  = -1;
 		while(action != 0){
-		        	if(isManager){
-	    // MANAGER INTERFACE
-	    System.out.println("What would you like to do?\n   (1) Post a message\n   "+
-		       "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
-		       "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
-		       "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
-		       "(8) Search for users\n   (9) Request to join friend circle\n   "+
-		       "(10) Find active users\n   (11) Show number of inactive users\n   "+
-		       "(12) Find top messages\n   (13) Display complete summary report\n"+
-		       "(0) EXIT BuzMO");
-	}
-	else{
-	    // USER INTERFACE
-	    System.out.println("What would you like to do?\n   (1) Post a message\n   "+
-		       "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
-		       "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
-		       "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
-		       "(8) Search for users\n   (9) Request to join friend circle\n   "+
-		       "(0) EXIT BuzMO");
-	}
-	      
-			try{
-				String input  = scanner.nextLine();
-				action = Integer.parseInt(input);
+		    if(isManager){
+			// MANAGER INTERFACE
+			System.out.println("What would you like to do?\n   (1) Post a message\n   "+
+					   "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
+					   "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
+					   "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
+					   "(8) Search for users\n   (9) Request to join friend circle\n   "+
+					   "(10) Find active users\n   (11) Show number of inactive users\n   "+
+					   "(12) Find top messages\n   (13) Display complete summary report\n"+
+					   "(0) EXIT BuzMO");
+		    }
+		    else{
+			// USER INTERFACE
+			System.out.println("What would you like to do?\n   (1) Post a message\n   "+
+					   "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
+					   "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
+					   "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
+					   "(8) Search for users\n   (9) Request to join friend circle\n   "+
+					   "(0) EXIT BuzMO");
+		    }
+		    
+		    try{
+			String input  = scanner.nextLine();
+			action = Integer.parseInt(input);
 			}
-			catch(Exception e){
-				System.out.println("ERROR: " + e);
-			}
-			
-			switch(action){
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			case 5:
-				break;
-			case 6:
-				break;
-			case 7:
-				break;
-			case 8:
-				break;
-			case 9:
-				break;
-			case 10:
-				break;
-			}
-		}	switch(action){
-	case 1:
-	    PostMessage();
-	    break;
-	case 2:
-	    deleteMessage();
-	    break;
-	case 3:
-	    createChatGroup();
-	    break;
-	case 4:
-	    modifyChatGroup();
-	    break;
-	case 5:
-	    sendChatGroupInvite();
-	    break;
-	case 6:
-	    acceptChatGroupInvite();
-	    break;
-	case 7:
-	    searchRecentMessages();
-	    break;
-	case 8:
-	    searchUsers();
-	    break;
-	case 9:
-	    sendFriendRequest();
-	    break;
-	case 10:
-	    if(!isManager) break;
-	    findActiveUsers();
-	    break;
-        case 11:
-	    if(!isManager) break;
-	    getNumberOfInactiveUsers();
-	    break;
-	case 12:
-	    if(!isManager) break;
-	    findTopMessages();
-	    break;
-	case 13:
-	    if(!isManager) break;
-	    getSummaryReport();
-	    break;
+		    catch(Exception e){
+			System.out.println("ERROR: " + e);
+		    }
+		    
+		   
+		    switch(action){
+		    case 1:
+			PostMessage();
+			break;
+		    case 2:
+			deleteMessage();
+			break;
+		    case 3:
+			createChatGroup();
+			break;
+		    case 4:
+			modifyChatGroup();
+			break;
+		    case 5:
+			sendChatGroupInvite();
+			break;
+		    case 6:
+			acceptChatGroupInvite();
+			break;
+		    case 7:
+			searchRecentMessages();
+		    break;
+		    case 8:
+			searchUsers();
+			break;
+		    case 9:
+			sendFriendRequest();
+			break;
+		    case 10:
+			if(!isManager) break;
+			findActiveUsers();
+			break;
+		    case 11:
+			if(!isManager) break;
+			getNumberOfInactiveUsers();
+			break;
+		    case 12:
+		    if(!isManager) break;
+		    findTopMessages();
+		    break;
+		    case 13:
+			if(!isManager) break;
+			getSummaryReport();
+			break;
+		    }
+		}
 	}
-   }
-
-	// LOGIN OR REGISTER TO BUZMO 
-	private static void promptLoginOrRegister(){
+    // LOGIN OR REGISTER TO BUZMO 
+    private static void promptLoginOrRegister(){
 		String answer = "";
 		System.out.println("Already have an account? (y/n)");
 		while(!answer.toLowerCase().equals("y") && !answer.toLowerCase().equals("n")){
