@@ -19,10 +19,10 @@ public class BuzMo {
   private static Scanner scanner;
    
   private static String url = "jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe";
-    //private static String username = "jmangel";
-    private static String username = "jjkaddoura";
-    //private static String password = "514";
-    private static String password = "432";
+	//private static String username = "jmangel";
+	private static String username = "jjkaddoura";
+	//private static String password = "514";
+	private static String password = "432";
   private static Connection con;
 
   /**
@@ -46,42 +46,42 @@ public class BuzMo {
     
     int action  = -1;
     while(action != 0){
-	System.out.println("What would you like to do?\n   (1) Post a message\n   "+
-		       "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
-		       "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
-		       "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
-		       "(8) Search for users\n   (9) Request to join friend circle\n   "+
-		       "(10) Get summary report\n   (0) EXIT BuzMO");
-	try{
-	    String input  = scanner.nextLine();
-	    action = Integer.parseInt(input);
-	}
-	catch(Exception e){
-	    System.out.println("ERROR: " + e);
-	}
-	
-	switch(action){
-	case 1:
-	    break;
-	case 2:
-	    break;
-	case 3:
-	    break;
-	case 4:
-	    break;
-	case 5:
-	    break;
-	case 6:
-	    break;
-	case 7:
-	    break;
-	case 8:
-	    break;
-	case 9:
-	    break;
-	case 10:
-	    break;
-	}
+			System.out.println("What would you like to do?\n   (1) Post a message\n   "+
+		                     "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
+		                     "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
+		                     "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
+		                     "(8) Search for users\n   (9) Request to join friend circle\n   "+
+		                     "(10) Get summary report\n   (0) EXIT BuzMO");
+			try{
+				String input  = scanner.nextLine();
+				action = Integer.parseInt(input);
+			}
+			catch(Exception e){
+				System.out.println("ERROR: " + e);
+			}
+			
+			switch(action){
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			case 10:
+				break;
+			}
     }
     ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
     try {
@@ -113,25 +113,25 @@ public class BuzMo {
 
     // LOGIN OR REGISTER TO BUZMO 
   private static void promptLoginORRegister(){
-        String answer = " ";
-        System.out.println("Already have an account? (y/n)");
-        while(!answer.toLowerCase().equals("y") && !answer.toLowerCase().equals("n")){
-	    System.out.println("Please enter 'y' to login or 'n' to register.");
-	  answer = scanner.nextLine();
-	}
-        System.out.println("Email:");
-  	String username = scanner.nextLine();
-  	System.out.println("Password:");
-  	String password = scanner.nextLine();
-	if(answer.equals("y")){
-  	//TODO validate
-	    System.out.println("Logged in.");
-	}
-	else{
-	    // INSERT NEW USER TO DATABASE
+		String answer = " ";
+		System.out.println("Already have an account? (y/n)");
+		while(!answer.toLowerCase().equals("y") && !answer.toLowerCase().equals("n")){
+			System.out.println("Please enter 'y' to login or 'n' to register.");
+			answer = scanner.nextLine();
+		}
+		System.out.println("Email:");
+		String username = scanner.nextLine();
+		System.out.println("Password:");
+		String password = scanner.nextLine();
+		if(answer.equals("y")){
+  		//TODO validate
+			System.out.println("Logged in.");
+		}
+		else{
+			// INSERT NEW USER TO DATABASE
 
-	    System.out.println("Congratulations! You have been successfully registered to BuzMo!");
-	}
+			System.out.println("Congratulations! You have been successfully registered to BuzMo!");
+		}
   }
 
   private static boolean setScreenname(String screenname){
