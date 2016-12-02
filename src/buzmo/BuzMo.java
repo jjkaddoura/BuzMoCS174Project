@@ -34,16 +34,18 @@ public class BuzMo {
 
 		System.out.println("Welcome to BuzMo!");
 
-		currentUser = new User("Kevin Durant", "DurantKev@gmail.com", "password", false, null);
+		//currentUser = new User("Kevin Durant", "DurantKev@gmail.com", "password", false, null);
 
 		// TODO code application logic here
 
-		promptLoginOrRegister();
+		while (currentUser == null){
+			promptLoginOrRegister();
+		}
 		boolean isManager = false; // DO A QUERY HERE TO SEE IF CUR_USER IS A MANAGER
 		int action  = -1;
 		while(action != 0){
 			if(isManager){
-			// MANAGER INTERFACE
+				// MANAGER INTERFACE
 				System.out.println("What would you like to do?\n    (1) Post a message\n    "+
 				                   "(2) Delete a message\n    (3) Create a ChatGroup\n    "+
 				                   "(4) Modify ChatGroup properties\n    (5) Invite a friend to a ChatGroup\n    "+
@@ -54,7 +56,7 @@ public class BuzMo {
 				                   "(0) EXIT BuzMo");
 			}
 			else{
-			// USER INTERFACE
+				// USER INTERFACE
 				System.out.println("What would you like to do?\n    (1) Post a message\n    "+
 				                   "(2) Delete a message\n    (3) Create a ChatGroup\n    "+
 				                   "(4) Modify ChatGroup properties\n    (5) Invite a friend to a ChatGroup\n    "+
@@ -129,16 +131,18 @@ public class BuzMo {
 			answer = scanner.nextLine();
 		}
 
-		System.out.println("Email:");
-		String username = scanner.nextLine();
-		System.out.println("Password:");
-		String password = scanner.nextLine();
-
 		if(answer.equals("y")){
-			//TODO validate and set currentUser
+
+			System.out.println("Email:");
+			String username = scanner.nextLine();
+			System.out.println("Password:");
+			String password = scanner.nextLine();
+
+			currentUser = validate(username, password);
 			System.out.println("Logged in.");
 		}
 		else{
+			currentUser = register();
 			// TODO INSERT NEW USER TO DATABASE and set currentUser
 			System.out.println("Congratulations! You have been successfully registered to BuzMo!");
 		}
@@ -147,6 +151,7 @@ public class BuzMo {
 	private static boolean setScreenname(String screenname){
 		if (screenname.length() <= 20){
 			currentUser.setScreenname(screenname);
+			//TODO update database
 			return true;
 		}
 		else {
@@ -297,7 +302,7 @@ public class BuzMo {
 				System.out.println("Please enter at least one TopicWord (or 0 to return to main menu):");
 			}
 			else {
-				topics.add(topic);
+				topics.add(topic.toLowerCase());
 				System.out.println("Enter more TopicWords, or 'done' if you're done (enter 0 to return to main menu):");
 			} 
 
@@ -367,7 +372,7 @@ public class BuzMo {
 				System.out.println("Please enter at least one TopicWord (or 0 to return to main menu):");
 			}
 			else {
-				topics.add(topic);
+				topics.add(topic.toLowerCase());
 				System.out.println("Enter more TopicWords, or 'done' if you're done (enter 0 to return to main menu):");
 			} 
 
@@ -482,6 +487,8 @@ public class BuzMo {
 		} catch (Exception e){
 			System.out.println("deletePrivateMessages ERROR");
 		}
+
+		//TODO MAYBE get only 7 most recent and scroll
 	}
 
 	private static void deleteChatGroupMessage(){
@@ -512,6 +519,8 @@ public class BuzMo {
 			System.out.println("deleteChatGroupMessages ERROR");
 		}
 
+		//TODO MAYBE get only 7 most recent and scroll
+
 	}
 
 	private static void deleteCustomMessage(){
@@ -541,6 +550,8 @@ public class BuzMo {
 		} catch (Exception e){
 			System.out.println("deleteCustomMessages ERROR");
 		}
+
+		//TODO MAYBE get only 7 most recent and scroll
 	}
 
 	private static void deleteBroadcastMessage(boolean isPublic){
@@ -570,6 +581,8 @@ public class BuzMo {
 		} catch (Exception e){
 			System.out.println("deleteBroadcastMessages ERROR");
 		}
+
+		//TODO MAYBE get only 7 most recent and scroll
 	}
 
 
@@ -878,7 +891,97 @@ public class BuzMo {
 		// the email provided must have posted a message <= 7 days ago
 		return;
 	}
+
+	private static User validate(String email, String password){
+		User user = null;
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT name, password, is_manager FROM UserProfile WHERE email='" + email + "'");
+			while(rs.next()){
+				if (password == rs.getString(2)){
+					user = new User(rs.getString(1), email, password, (rs.getString(3) == "1" ? true : false), new ArrayList<String>());
+				}
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+		
+		return user;
+	}
+
+	private static User register(){
+		System.out.println("What's your name?");
+		String name = scanner.nextLine();
+		while (name.length() > 20 || name.length() < 1){
+			System.out.println("Name can be up to 20 characters:");
+			name = scanner.nextLine();
+		}
+
+		System.out.println("Hello " + name + "! Please enter a 10 digit phone number:");
+		String phone_num = scanner.nextLine();
+		while (!phone_num.matches("\\A[0-9]{10}\\z")){
+			if (phone_num.equals("0")) return null;
+			System.out.println("Phone number must be 10 digits. (Enter 0 to return to main menu.)");
+			phone_num = scanner.nextLine();
+		}
+
+		System.out.println("Enter your email (you will use this email to login with).");
+		String email = scanner.nextLine();
+		while (email.length() > 20 || email.length() < 2){
+			System.out.println("Email can be no more than 20 characters:");
+			email = scanner.nextLine();
+		}
+
+		System.out.println("Would you like to select an optional screenname? (y/n)");
+		String response = scanner.nextLine();
+		while(!response.toLowerCase().equals("y") && !response.toLowerCase().equals("n")){
+			System.out.println("Please enter 'y' to choose a screenname or 'n' to skip (You can set later).");
+			response = scanner.nextLine();
+		}
+
+		String screenname = "";
+		while (response.toLowerCase().equals("y") && (screenname.length() <= 20 || screenname.length() > 0)){
+			System.out.println("Enter a screenname of max 20 characters:");
+			screenname = scanner.nextLine();
+		}
+
+		System.out.println("Choose a password between 2 and 10 characters:");
+		String password = scanner.nextLine();
+		while (password.length() < 2 || password.length() > 10){
+			System.out.println("Password must be between 2 and 10 characters:");
+			password = scanner.nextLine();
+		}
+
+		// Ask for TopicWords
+		ArrayList<String> topics = new ArrayList<String>();
+		System.out.println("Enter some TopicWords to associate with yourself (Hit enter to skip, enter 0 to return to the main menu):");
+		String topic = scanner.nextLine();
+		if (topic.equals("0")) return null;
+		while (!topic.toLowerCase().equals("done") && !topic.toLowerCase().equals("")){
+			topics.add(topic.toLowerCase());
+			System.out.println("Enter more TopicWords, or 'done' if you're done (enter 0 to return to main menu):");
+
+			topic = scanner.nextLine();
+			if (topic.equals("0")) return null;
+		}
+
+		User user = null;
+
+		if (!screenname.equals("")) user = new User(name, email, password, false, topics, screenname);
+		else user = new User(name, email, password, false, topics);
+
+		//TODO insert user into database
+		//TODO insert topic words into database
+
+		return user;
+	}
 	
+
+
 	// MANAGER FUNCTIONS
 	private static void getSummaryReport(){
 		findActiveUsers();
