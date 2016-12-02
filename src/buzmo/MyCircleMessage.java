@@ -21,7 +21,7 @@ public class MyCircleMessage extends Message{
     this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
 
-    this.receipients = new ArrayList<String>();
+    this.recipients = new ArrayList<String>();
     isPublic = false;
   }
   public MyCircleMessage(String timestamp, String sender, String body, List<String> topics){
@@ -29,7 +29,7 @@ public class MyCircleMessage extends Message{
     this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
 
-    this.receipients = new ArrayList<String>();
+    this.recipients = new ArrayList<String>();
     isPublic = false;
   }
    

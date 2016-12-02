@@ -13,7 +13,7 @@ import java.util.*;
 public class PrivateMessage extends Message {
 	private boolean sender_copy_delete;
 	private boolean receiver_copy_delete;
-	private String receiver;
+	protected String receiver;
 
 	PrivateMessage(int m_id, String timestamp, String sender, String receiver, String body){
 		super(m_id, timestamp, sender, body);

@@ -136,10 +136,11 @@ public class BuzMo {
 			System.out.println("Email:");
 			String username = scanner.nextLine();
 			System.out.println("Password:");
-			String password = scanner.nextLine();
+			String userPassword = scanner.nextLine();
 
-			currentUser = validate(username, password);
-			System.out.println("Logged in.");
+			currentUser = validate(username, userPassword);
+			if (currentUser != null) System.out.println("Logged in.");
+			else System.out.println("Invalid login");
 		}
 		else{
 			currentUser = register();
@@ -476,16 +477,89 @@ public class BuzMo {
 		int indexInput = Integer.parseInt(scanner.nextLine());
 		if (indexInput == 0) return;
 		int indexToDelete = indexInput - 1;
-		int m_idToDelete = privateMessages.get(indexToDelete).getM_id();
+		PrivateMessage messageToDelete = privateMessages.get(indexToDelete);
+		int m_idToDelete = messageToDelete.getM_id();
 
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			con = DriverManager.getConnection(url, username, password);
-			int result = updateDatabase("DELETE FROM PrivateMessage WHERE m_id=" + m_idToDelete);
+			int result;
+			if (messageToDelete.deletedByReceiver()){
+				result = updateDatabase("DELETE FROM PrivateMessage WHERE m_id=" + m_idToDelete);
+			} else {
+				result = updateDatabase("UPDATE PrivateMessage SET sender_copy_delete=1 WHERE m_id=" + m_idToDelete);
+			}
+
 			if (result == 1) System.out.println("Message successfully deleted");
 			con.close();
 		} catch (Exception e){
 			System.out.println("deletePrivateMessages ERROR");
+		}
+
+		//TODO MAYBE get only 7 most recent and scroll
+	}
+
+	// overload to delete from specific conversation
+	private static void deletePrivateMessage(String friendEmail){
+		ArrayList<PrivateMessage> privateMessages = getPrivateConversation(friendEmail);
+		if (privateMessages.isEmpty()){
+			System.out.println("This conversation is empty.");
+			return;
+		}
+		
+		int i = 1;
+		int viewingMessagesUpTo = 7;
+		int length = privateMessages.size();
+		for (PrivateMessage pm: privateMessages){
+			if (i <= viewingMessagesUpTo) {
+				System.out.println("    (" + i + ") " + pm.toString());
+				i++;
+			} else if (length > viewingMessagesUpTo){
+				System.out.println("Type 'more' to view more or 'done' to continue.");
+				String response = scanner.nextLine();
+				while (!response.toLowerCase().equals("more") && !response.toLowerCase().equals("done") && !response.equals("0")){
+					System.out.println("Please enter 'more' to view more, 'done' to continue or 0 to return to the main menu.");
+					response = scanner.nextLine();
+				}
+				boolean isDone = false;
+				switch (response.toLowerCase()) {
+					case "0":
+						return;
+					case "more":
+						viewingMessagesUpTo += 7;
+						break;
+					case "done":
+						isDone = false;
+						break;
+				}
+				if (isDone) break;
+			}
+		}
+
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+
+		int indexInput = Integer.parseInt(scanner.nextLine());
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		PrivateMessage messageToDelete = privateMessages.get(indexToDelete);
+		int m_idToDelete = messageToDelete.getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+
+			int result;
+			if ((messageToDelete.sender.equals(friendEmail) && messageToDelete.deletedBySender()) ||
+			    (messageToDelete.receiver.equals(friendEmail) && messageToDelete.deletedByReceiver())){
+				result = updateDatabase("DELETE FROM PrivateMessage WHERE m_id=" + m_idToDelete);
+			} else {
+				result = updateDatabase("UPDATE PrivateMessage SET sender_copy_delete=1 WHERE m_id=" + m_idToDelete);
+			}
+
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deletePrivateMessages(" + friendEmail + ") ERROR");
 		}
 
 		//TODO MAYBE get only 7 most recent and scroll
@@ -520,7 +594,68 @@ public class BuzMo {
 		}
 
 		//TODO MAYBE get only 7 most recent and scroll
+	}
 
+	// overload to delete from specific conversation
+	private static void deleteChatGroupMessage(String gname){
+		ArrayList<ChatGroupMessage> chatGroupMessages = getChatGroupConversation(gname);
+		if (chatGroupMessages.isEmpty()){
+			return;
+		}
+
+		System.out.println(gname.toUpperCase());
+		int i = 1;
+		int viewingMessagesUpTo = 7;
+		int length = chatGroupMessages.size();
+		for (ChatGroupMessage gm: chatGroupMessages){
+			if (i <= viewingMessagesUpTo) {
+				System.out.println("    (" + i + ") " + gm.toString());
+				i++;
+			} else if (length > viewingMessagesUpTo){
+				System.out.println("Type 'more' to view more or 'done' to continue.");
+				String response = scanner.nextLine();
+				while (!response.toLowerCase().equals("more") && !response.toLowerCase().equals("done") && !response.equals("0")){
+					System.out.println("Please enter 'more' to view more, 'done' to continue or 0 to return to the main menu.");
+					response = scanner.nextLine();
+				}
+				boolean isDone = false;
+				switch (response.toLowerCase()) {
+					case "0":
+						return;
+					case "more":
+						viewingMessagesUpTo += 7;
+						break;
+					case "done":
+						isDone = false;
+						break;
+				}
+				if (isDone) break;
+			}
+		}
+
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+
+		int indexInput = Integer.parseInt(scanner.nextLine());
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		ChatGroupMessage messageToDelete = chatGroupMessages.get(indexToDelete);
+		if (!messageToDelete.sender.equals(currentUser.getEmail())){
+			System.out.println("Only the sender can delete a message.");
+			return;
+		}
+		int m_idToDelete = messageToDelete.getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+			int result = updateDatabase("DELETE FROM ChatGroupMessage WHERE m_id=" + m_idToDelete);
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deleteChatGroupMessages(" + gname + ") ERROR");
+		}
+
+		//TODO MAYBE get only 7 most recent and scroll
 	}
 
 	private static void deleteCustomMessage(){
@@ -549,6 +684,63 @@ public class BuzMo {
 			con.close();
 		} catch (Exception e){
 			System.out.println("deleteCustomMessages ERROR");
+		}
+
+		//TODO MAYBE get only 7 most recent and scroll
+	}
+
+	private static void deleteMyCircleMessage(){
+		ArrayList<MyCircleMessage> myCircleMessages = getMyCircleMessages();
+		//TODO
+		if (myCircleMessages.isEmpty()){
+			System.out.println("You do not have any customMessages");
+			return;
+		}
+		
+		int i = 1;
+		int viewingMessagesUpTo = 7;
+		int length = myCircleMessages.size();
+		for (MyCircleMessage cm: myCircleMessages){
+			if (i <= viewingMessagesUpTo) {
+				System.out.println("    (" + i + ") " + cm.toString());
+				i++;
+			} else if (length > viewingMessagesUpTo){
+				System.out.println("Type 'more' to view more or 'done' to continue.");
+				String response = scanner.nextLine();
+				while (!response.toLowerCase().equals("more") && !response.toLowerCase().equals("done") && !response.equals("0")){
+					System.out.println("Please enter 'more' to view more, 'done' to continue or 0 to return to the main menu.");
+					response = scanner.nextLine();
+				}
+				boolean isDone = false;
+				switch (response.toLowerCase()) {
+					case "0":
+						return;
+					case "more":
+						viewingMessagesUpTo += 7;
+						break;
+					case "done":
+						isDone = false;
+						break;
+				}
+				if (isDone) break;
+			}
+		}
+
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+		int indexInput = Integer.parseInt(scanner.nextLine());
+
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		int m_idToDelete = myCircleMessages.get(indexToDelete).getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+			int result = updateDatabase("DELETE FROM CustomMessage WHERE m_id=" + m_idToDelete);
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deleteMyCircleMessage ERROR");
 		}
 
 		//TODO MAYBE get only 7 most recent and scroll
@@ -584,7 +776,6 @@ public class BuzMo {
 
 		//TODO MAYBE get only 7 most recent and scroll
 	}
-
 
 	private static ChatGroup createChatGroup(){
 		System.out.println("Name your chatgroup:");
@@ -721,9 +912,38 @@ public class BuzMo {
 			Class.forName("oracle.jdbc.driver.OracleDriver"); 
 			con = DriverManager.getConnection(url,username, password);
 
-			ResultSet rs = queryDatabase("SELECT m_id, time, received_by, body FROM PrivateMessage WHERE sent_by='" + currentUser.getEmail() + "' AND sender_copy_delete=0");
+			ResultSet rs = queryDatabase("SELECT m_id, time, received_by, body, receiver_copy_delete FROM PrivateMessage WHERE sent_by='" + currentUser.getEmail() + "' AND sender_copy_delete=0");
 			while(rs.next()){
-				messages.add(new PrivateMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4)));
+				messages.add(new PrivateMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4), false, (rs.getString(5) == "1" ? true : false)));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return messages;
+	}
+
+	// Returns a list of PrivateMessages in a conversation with friend
+	private static ArrayList<PrivateMessage> getPrivateConversation(String friendEmail){
+		ArrayList<PrivateMessage> messages = new ArrayList<PrivateMessage>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, sent_by, body, receiver_copy_delete AS deletedByFriend FROM PrivateMessage WHERE sent_by='" + currentUser.getEmail() + 
+			                             "' AND received_by='" + friendEmail + "' AND sender_copy_delete=0" +
+			                             " UNION SELECT m_id, time, sent_by, body, sender_copy_delete AS deletedByFriend FROM PrivateMessage WHERE received_by='" + currentUser.getEmail() + 
+			                             "' AND sent_by='" + friendEmail + "' AND receiver_copy_delete=0" +
+			                             " ORDER BY time DESC");
+			while(rs.next()){
+				boolean sentByMe = (rs.getString(3).equals(currentUser.getEmail()));
+				boolean deletedByFriend = (rs.getString(5).equals("1"));
+				messages.add(new PrivateMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), rs.getString(3), 
+				                                (sentByMe ? friendEmail : currentUser.getEmail()), rs.getString(4), 
+				                                (sentByMe ? false : deletedByFriend), (sentByMe ? deletedByFriend : false)));
 			}
 
 			con.close();
@@ -742,7 +962,11 @@ public class BuzMo {
 			Class.forName("oracle.jdbc.driver.OracleDriver"); 
 			con = DriverManager.getConnection(url,username, password);
 
-			ResultSet rs = queryDatabase("SELECT m_id, time, body, gname FROM ChatGroupMessage WHERE sent_by='" + currentUser.getEmail() + "'");
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			//TODO get timestamp
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, body, G.gname, G.duration FROM ChatGroupMessage M JOIN ChatGroup G ON M.gname=G.gname" +
+			                             " WHERE sent_by='" + currentUser.getEmail() + "' AND time + G.duration >= TIMESTAMP '" + timestamp + "'");
 			while(rs.next()){
 				messages.add(new ChatGroupMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4)));
 			}
@@ -753,6 +977,94 @@ public class BuzMo {
 		} 
 
 		return messages;
+	}
+
+	// Returns a list of my sent ChatGroupMessages
+	private static ArrayList<ChatGroupMessage> getChatGroupConversation(String gname){
+		ArrayList<ChatGroupMessage> messages = new ArrayList<ChatGroupMessage>();
+
+		ArrayList<String> myChatGroups = getMyChatGroups();
+		if (!myChatGroups.contains(gname)){
+			System.out.println("You are not a member of this ChatGroup or it does not exist.");
+			return messages;
+		}
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			//TODO get timestamp
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, body, G.gname, G.duration FROM ChatGroupMessage M JOIN ChatGroup G ON M.gname=G.gname" + 
+			                             " WHERE gname='" + gname + "' AND time + G.duration >= TIMESTAMP '" + timestamp + 
+			                             "' ORDER BY time DESC");
+			while(rs.next()){
+				messages.add(new ChatGroupMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4)));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		if (messages.isEmpty()){
+			System.out.println("There are no messages in this ChatGroup.");
+		}
+
+		return messages;
+	}
+
+	// Return a list of messages in MyCircle
+	private static ArrayList<MyCircleMessage> getMyCircleMessages(){
+		ArrayList<MyCircleMessage> messages = new ArrayList<MyCircleMessage>();
+
+		ArrayList<String> myFriends = getFriends();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			//TODO get timestamp
+
+			// get my posted broadcast messages
+			String sqlQuery = "SELECT m_id, sent_by, time, body FROM BroadcastMessage WHERE sent_by='" + currentUser.getEmail() + "'";
+			// get my posted custom messages
+			sqlQuery += " UNION SELECT m_id, sent_by, time, body FROM CustomMessage WHERE sent_by='" + currentUser.getEmail() + "'";
+			for (String friend: myFriends) {
+				// get my friends' broadcast messages
+				sqlQuery += " UNION SELECT m_id, sent_by, time, body FROM BroadcastMessage WHERE sent_by='" + friend + "'";
+				// get my friends' custom messages that I can see
+				sqlQuery += " UNION SELECT V.m_id, M.sent_by, M.time, M.body FROM CustomMessage M JOIN Message_Viewer V ON V.m_id=M.m_id WHERE V.email='" + currentUser.getEmail() + 
+				            "' AND M.sent_by='" + friend + "'";
+			}
+
+			//TODO get topics?
+
+			// sort by time descending
+			sqlQuery += " ORDER BY time DESC";
+
+			ResultSet rs = queryDatabase(sqlQuery);
+
+			while (rs.next()){
+				int m_id = Integer.parseInt(rs.getString(1));
+
+				ResultSet topicRs = queryDatabase("SELECT keyword FROM BroadcastMessage_Topic WHERE m_id=" + m_id + " UNION SELECT keyword FROM CustomMessage_Topic WHERE m_id=" + m_id);
+				ArrayList<String> topics = new ArrayList<String>();
+				while (topicRs.next()){
+					topics.add(topicRs.getString(1));
+				}
+				messages.add(new MyCircleMessage(m_id, rs.getString(3), rs.getString(2), rs.getString(4), topics));
+			}
+
+			con.close();
+		} catch (Exception e){
+			System.out.println("getMyCircleMessages ERROR: " + e);
+		}
+
+		return messages;
+		
 	}
 
 	// Returns a list of my sent BroadCastMessages
@@ -892,7 +1204,7 @@ public class BuzMo {
 		return;
 	}
 
-	private static User validate(String email, String password){
+	private static User validate(String email, String userPassword){
 		User user = null;
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver"); 
@@ -900,8 +1212,8 @@ public class BuzMo {
 
 			ResultSet rs = queryDatabase("SELECT name, password, is_manager FROM UserProfile WHERE email='" + email + "'");
 			while(rs.next()){
-				if (password == rs.getString(2)){
-					user = new User(rs.getString(1), email, password, (rs.getString(3) == "1" ? true : false), new ArrayList<String>());
+				if (userPassword.equals(rs.getString(2))){
+					user = new User(rs.getString(1), email, userPassword, (rs.getString(3) == "1" ? true : false), new ArrayList<String>());
 				}
 			}
 
@@ -950,10 +1262,10 @@ public class BuzMo {
 		}
 
 		System.out.println("Choose a password between 2 and 10 characters:");
-		String password = scanner.nextLine();
-		while (password.length() < 2 || password.length() > 10){
+		String userPassword = scanner.nextLine();
+		while (userPassword.length() < 2 || password.length() > 10){
 			System.out.println("Password must be between 2 and 10 characters:");
-			password = scanner.nextLine();
+			userPassword = scanner.nextLine();
 		}
 
 		// Ask for TopicWords
@@ -971,8 +1283,8 @@ public class BuzMo {
 
 		User user = null;
 
-		if (!screenname.equals("")) user = new User(name, email, password, false, topics, screenname);
-		else user = new User(name, email, password, false, topics);
+		if (!screenname.equals("")) user = new User(name, email, userPassword, false, topics, screenname);
+		else user = new User(name, email, userPassword, false, topics);
 
 		//TODO insert user into database
 		//TODO insert topic words into database
