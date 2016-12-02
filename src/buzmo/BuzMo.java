@@ -111,7 +111,7 @@ public class BuzMo {
   }
 
 
-    // LOGIN OR REGISTER TO BUZMO 
+	// LOGIN OR REGISTER TO BUZMO 
   private static void promptLoginORRegister(){
 		String answer = " ";
 		System.out.println("Already have an account? (y/n)");
