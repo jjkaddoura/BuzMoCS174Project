@@ -28,12 +28,13 @@ public class BroadcastMessage extends MyCircleMessage{
 	public int getReadCount(){ return this.read_count; }
 
 	@Override
-	public String toString(){
-		String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
+		public String toString(){
+			String o = sender + ":  " + body + "\n Time: " + timestamp + "\n";
 		for(String topic : topics){
-			o += "topics: " + topic + ", ";
+			o += "Topics:  " + topic + ", ";
 		}
-		o += isPublic ? "public" : "MyCircle";
+		if(!topics.isEmpty()) o = o.subsstring(0,o.length()-2);
+		o += isPublic ? "BuzMo public feed" : "MyCircle";
 		
 				 
 		return o;

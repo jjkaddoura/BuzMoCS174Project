@@ -46,8 +46,7 @@ public class PrivateMessage extends Message {
 
 	@Override
 	public String toString(){
-		String o = m_id  + ", " + timestamp + ", " + sender + ", " + body;
-		o =  o + ", " + receiver;
+		String o = sender + "------>" + receiver + "\nText: " + body + "\n" + "Time: " + timestamp;
 		return o;
 	}
 }
