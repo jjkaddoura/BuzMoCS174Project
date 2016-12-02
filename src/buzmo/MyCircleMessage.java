@@ -13,16 +13,24 @@ import java.util.*;
  */
 public class MyCircleMessage extends Message{
 	protected ArrayList<String> topics;
+  protected ArrayList<String> recipients;
+  protected boolean isPublic;
 
 	public MyCircleMessage(int m_id, String timestamp, String sender, String body, List<String> topics){
     super(m_id, timestamp, sender, body);
     this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
+
+    this.receipients = new ArrayList<String>();
+    isPublic = false;
   }
   public MyCircleMessage(String timestamp, String sender, String body, List<String> topics){
     super(timestamp, sender, body);
     this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
+
+    this.receipients = new ArrayList<String>();
+    isPublic = false;
   }
    
    

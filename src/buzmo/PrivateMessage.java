@@ -21,6 +21,12 @@ public class PrivateMessage extends Message {
 		this.sender_copy_delete = false;
 		this.receiver_copy_delete = false;
 	}
+	PrivateMessage(int m_id, String timestamp, String sender, String receiver, String body, boolean sender_copy_delete, boolean receiver_copy_delete){
+		super(m_id, timestamp, sender, body);
+		this.receiver = receiver;
+		this.sender_copy_delete = sender_copy_delete;
+		this.receiver_copy_delete = receiver_copy_delete;
+	}
 	PrivateMessage(String timestamp, String sender, String receiver, String body){
 		super(timestamp, sender, body);
 		this.receiver = receiver;
@@ -30,6 +36,13 @@ public class PrivateMessage extends Message {
 
 	void deleteSenderCopy() { this.sender_copy_delete = true; }
 	void deleteReceiverCopy() { this.receiver_copy_delete = true; }
+
+	public boolean deletedBySender(){
+		return sender_copy_delete;
+	}
+	public boolean deletedByReceiver(){
+		return receiver_copy_delete;
+	}
 
 	@Override
 	public String toString(){
