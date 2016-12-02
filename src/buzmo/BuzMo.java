@@ -15,12 +15,14 @@ import java.sql.*;
  */
 public class BuzMo {
 
-	private static User currentUser;
-	private static Scanner scanner;
+  private static User currentUser;
+  private static Scanner scanner;
    
   private static String url = "jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe";
-  private static String username = "jmangel";
-  private static String password = "514";
+    //private static String username = "jmangel";
+    private static String username = "jjkaddoura";
+    //private static String password = "514";
+    private static String password = "432";
   private static Connection con;
 
   /**
@@ -36,24 +38,66 @@ public class BuzMo {
       System.out.println("ERROR: " + e);
     }
 
-
-  	System.out.println("Welcome to BuzMo!");
-
+    
+    System.out.println("Welcome to BuzMo!");
+    // Login or register
+    promptLoginORRegister();
+    
+    
+    int action  = -1;
+    while(action != 0){
+	System.out.println("What would you like to do?\n   (1) Post a message\n   "+
+		       "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
+		       "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
+		       "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
+		       "(8) Search for users\n   (9) Request to join friend circle\n   "+
+		       "(10) Get summary report\n   (0) EXIT BuzMO");
+	try{
+	    String input  = scanner.nextLine();
+	    action = Integer.parseInt(input);
+	}
+	catch(Exception e){
+	    System.out.println("ERROR: " + e);
+	}
+	
+	switch(action){
+	case 1:
+	    break;
+	case 2:
+	    break;
+	case 3:
+	    break;
+	case 4:
+	    break;
+	case 5:
+	    break;
+	case 6:
+	    break;
+	case 7:
+	    break;
+	case 8:
+	    break;
+	case 9:
+	    break;
+	case 10:
+	    break;
+	}
+    }
     ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
     try {
       while(rs.next()){
-        System.out.println(rs.getString(6) + " " 
-          + rs.getString(1) + " " 
-          + rs.getString(2) + " "
-          + rs.getString(3) + " " 
-          + rs.getString(4) + " "
-          + (rs.getInt(5)==1 ? "Y" : "N"));
+        System.out.println(rs.getString(1) + " " 
+          + rs.getString(2) + " " 
+          + rs.getString(3) + " "
+          + rs.getString(4) + " " 
+          + rs.getString(5) + " "
+          + (rs.getInt(6)==1 ? "Y" : "N"));
       }
     } catch (Exception e) {
       System.out.println("ERROR: " + e);
     }
 
-
+	
     // TODO code application logic here
 
 
@@ -66,14 +110,28 @@ public class BuzMo {
     
   }
 
-  private static void promptLogin(){
-  	System.out.println("Email:");
-  	String username = scanner.nextLine();
 
+    // LOGIN OR REGISTER TO BUZMO 
+  private static void promptLoginORRegister(){
+        String answer = " ";
+        System.out.println("Already have an account? (y/n)");
+        while(!answer.toLowerCase().equals("y") && !answer.toLowerCase().equals("n")){
+	    System.out.println("Please enter 'y' to login or 'n' to register.");
+	  answer = scanner.nextLine();
+	}
+        System.out.println("Email:");
+  	String username = scanner.nextLine();
   	System.out.println("Password:");
   	String password = scanner.nextLine();
-
+	if(answer.equals("y")){
   	//TODO validate
+	    System.out.println("Logged in.");
+	}
+	else{
+	    // INSERT NEW USER TO DATABASE
+
+	    System.out.println("Congratulations! You have been successfully registered to BuzMo!");
+	}
   }
 
   private static boolean setScreenname(String screenname){
@@ -131,7 +189,7 @@ public class BuzMo {
   private static void PostChatGroupMessage(){
   	System.out.println("Enter ChatGroup name (or 0 to return to main menu):");
   	String groupName = scanner.nextLine();
-  	if (groupName == "0") return;
+  	if (groupName.equals("0")) return;
 
   	String queryString = "SELECT * FROM GroupMember WHERE gname=" + groupName + " AND email=" + currentUser.getEmail() + ";";
   	//TODO check if GroupMember relationship is found for this (user,group) tuple
@@ -187,11 +245,11 @@ public class BuzMo {
   	System.out.println("Would you like to change the name of this ChatGroup?(Y/N)");
   	String changeGroup = scanner.nextLine();
 
-  	while (changeGroup.toLowerCase() != "y" && changeGroup.toLowerCase() != "n"){
+  	while (!changeGroup.toLowerCase().equals("y") && !changeGroup.toLowerCase().equals("n")){
   		System.out.println("Could not understand input. Please input 'Y' if you want to change the name or 'N' otherwise.");
   		changeGroup = scanner.nextLine();
   	}
-  	if (changeGroup.toLowerCase() == "y"){
+  	if (changeGroup.toLowerCase().equals("y")){
   		System.out.println("Enter new ChatGroup name:");
   		String newName = scanner.nextLine();
   		chatGroup.setName(newName);
@@ -201,11 +259,11 @@ public class BuzMo {
   	System.out.println("Would you like to change the duration of messages posted in this ChatGroup?(Y/N)");
   	String changeDuration = scanner.nextLine();
 
-  	while (changeDuration.toLowerCase() != "y" && changeDuration.toLowerCase() != "n"){
+  	while (!changeDuration.toLowerCase().equals("y") && !changeDuration.toLowerCase().equals("n")){
   		System.out.println("Could not understand input. Please input 'Y' if you want to change the duration or 'N' otherwise.");
   		changeDuration = scanner.nextLine();
   	}
-  	if (changeDuration.toLowerCase() == "y"){
+  	if (changeDuration.toLowerCase().equals( "y")){
   		System.out.println("How many days would you like messages in this chatGroup to last? (Hit Enter to use default 7)");
 	  	int duration;
 	  	try {
