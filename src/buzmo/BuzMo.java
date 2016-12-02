@@ -34,25 +34,7 @@ public class BuzMo {
 
 		System.out.println("Welcome to BuzMo!");
 
-		// Print all users REMOVE THIS CODE
-		ArrayList<Map<String, Object>> allUsers = getAllUsers();
-		for (Map user: allUsers){
-			// Print all column values
-			for (Object key: user.keySet()){
-				System.out.print(user.get(key) + " ");
-			}
-			System.out.println();
-
-			// Print only email
-			//System.out.println(user.get("EMAIL"));
-		}
-
-		// Print Kevin Durant's friends REMOVE THIS CODE
 		currentUser = new User("Kevin Durant", "DurantKev@gmail.com", "password", false, null);
-		ArrayList<String> kevsFriends = getFriends();
-		for (String email: kevsFriends){
-			System.out.println(email);
-		}
 
 		// TODO code application logic here
 
@@ -60,85 +42,86 @@ public class BuzMo {
 		boolean isManager = false; // DO A QUERY HERE TO SEE IF CUR_USER IS A MANAGER
 		int action  = -1;
 		while(action != 0){
-		    if(isManager){
+			if(isManager){
 			// MANAGER INTERFACE
-			System.out.println("What would you like to do?\n   (1) Post a message\n   "+
-					   "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
-					   "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
-					   "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
-					   "(8) Search for users\n   (9) Request to join friend circle\n   "+
-					   "(10) Find active users\n   (11) Show number of inactive users\n   "+
-					   "(12) Find top messages\n   (13) Display complete summary report\n"+
-					   "(0) EXIT BuzMO");
-		    }
-		    else{
-			// USER INTERFACE
-			System.out.println("What would you like to do?\n   (1) Post a message\n   "+
-					   "(2) Delete a message\n   (3) Create a ChatGroup\n   "+
-					   "(4) Modify ChatGroup properties\n   (5) Invite a friend to a ChatGroup\n   "+
-					   "(6) Accept a ChatGroup invite\n   (7) Search recent messages\n   "+
-					   "(8) Search for users\n   (9) Request to join friend circle\n   "+
-					   "(0) EXIT BuzMO");
-		    }
-		    
-		    try{
-			String input  = scanner.nextLine();
-			action = Integer.parseInt(input);
+				System.out.println("What would you like to do?\n    (1) Post a message\n    "+
+				                   "(2) Delete a message\n    (3) Create a ChatGroup\n    "+
+				                   "(4) Modify ChatGroup properties\n    (5) Invite a friend to a ChatGroup\n    "+
+				                   "(6) Accept a ChatGroup invite\n    (7) Search recent messages\n   "+
+				                   "(8) Search for users\n    (9) Request to join friend circle\n    "+
+				                   "(10) Find active users\n    (11) Show number of inactive users\n    "+
+				                   "(12) Find top messages\n    (13) Display complete summary report\n"+
+				                   "(0) EXIT BuzMo");
 			}
-		    catch(Exception e){
-			System.out.println("ERROR: " + e);
-		    }
+			else{
+			// USER INTERFACE
+				System.out.println("What would you like to do?\n    (1) Post a message\n    "+
+				                   "(2) Delete a message\n    (3) Create a ChatGroup\n    "+
+				                   "(4) Modify ChatGroup properties\n    (5) Invite a friend to a ChatGroup\n    "+
+				                   "(6) Accept a ChatGroup invite\n    (7) Search recent messages\n    "+
+				                   "(8) Search for users\n    (9) Request to join friend circle\n    "+
+				                   "(0) EXIT BuzMo");
+		  }
+		    
+			try{
+				String input  = scanner.nextLine();
+				action = Integer.parseInt(input);
+			}
+			catch(Exception e){
+				System.out.println("ERROR: " + e);
+			}
 		    
 		   
-		    switch(action){
-		    case 1:
-			PostMessage();
-			break;
-		    case 2:
-			deleteMessage();
-			break;
-		    case 3:
-			createChatGroup();
-			break;
-		    case 4:
-			modifyChatGroup();
-			break;
-		    case 5:
-			sendChatGroupInvite();
-			break;
-		    case 6:
-			acceptChatGroupInvite();
-			break;
-		    case 7:
-			searchRecentMessages();
-		    break;
-		    case 8:
-			searchUsers();
-			break;
-		    case 9:
-			sendFriendRequest();
-			break;
-		    case 10:
-			if(!isManager) break;
-			findActiveUsers();
-			break;
-		    case 11:
-			if(!isManager) break;
-			getNumberOfInactiveUsers();
-			break;
-		    case 12:
-		    if(!isManager) break;
-		    findTopMessages();
-		    break;
-		    case 13:
-			if(!isManager) break;
-			getSummaryReport();
-			break;
-		    }
+			switch(action){
+				case 1:
+					PostMessage();
+					break;
+				case 2:
+					deleteMessage();
+					break;
+				case 3:
+					createChatGroup();
+					break;
+				case 4:
+					modifyChatGroup();
+					break;
+				case 5:
+					sendChatGroupInvite();
+					break;
+				case 6:
+					acceptChatGroupInvite();
+					break;
+				case 7:
+					searchRecentMessages();
+					break;
+				case 8:
+					searchUsers();
+					break;
+				case 9:
+					sendFriendRequest();
+					break;
+				case 10:
+					if(!isManager) break;
+					findActiveUsers();
+					break;
+				case 11:
+					if(!isManager) break;
+					getNumberOfInactiveUsers();
+					break;
+				case 12:
+					if(!isManager) break;
+						findTopMessages();
+					break;
+				case 13:
+					if(!isManager) break;
+					getSummaryReport();
+					break;
+			}
 		}
 	}
-    // LOGIN OR REGISTER TO BUZMO 
-    private static void promptLoginOrRegister(){
+
+	// LOGIN OR REGISTER TO BUZMO 
+	private static void promptLoginOrRegister(){
 		String answer = "";
 		System.out.println("Already have an account? (y/n)");
 		while(!answer.toLowerCase().equals("y") && !answer.toLowerCase().equals("n")){
@@ -173,7 +156,9 @@ public class BuzMo {
 	}
 
 	private static void PostMessage(){
-		String promptMessage = "What type of message do you want to post? Enter 1 for a private message, 2 for a message to a ChatGroup, 3 for a message to certain friends, 4 for a message to all friends, 5 for a public post.";
+		String promptMessage = "What type of message do you want to post?\n    (1) for a private message\n    " + 
+		                       "(2) for a message to a ChatGroup\n    (3) for a message to certain friends\n    " + 
+		                       "(4) for a message to all friends\n    (5) for a public post";
 		int messageType = -1;
 
 		while (messageType < 0 || messageType > 5){
@@ -181,9 +166,11 @@ public class BuzMo {
 				System.out.println(promptMessage);
 				System.out.println("Enter 0 to return to main menu.");
 				messageType = scanner.nextInt();
+				scanner.nextLine();
 			} catch (InputMismatchException e){
-				promptMessage = "Not valid input, please input 1 for a private message, 2 for a message to a ChatGroup, 3 for a message to certain friends, 4 for a message to all friends, 5 for a public post.";
-
+				promptMessage = "Not valid input, please enter:\n(1) for a private message\n" + 
+				                "(2) for a message to a ChatGroup\n(3) for a message to certain friends\n" + 
+				                "(4) for a message to all friends\n(5) for a public post";
 			}
 		}
 		switch(messageType){
@@ -207,31 +194,238 @@ public class BuzMo {
 
 	private static void PostPrivateMessage(){
 		System.out.println("Enter recipient's email (or 0 to return to main menu):");
-		String email = scanner.nextLine();
-		if (email == "0") return;
-		//TODO the rest
+		String email = "";
+		while (email.equals("")) email = scanner.nextLine();
+		if (email.equals("0")) return;
 
+		ArrayList<String> friends = getFriends();
+		while (!friends.contains(email)){
+			System.out.println("This user is not in your MyCircle\nEnter another email (or 0 to return to main menu):");
+			email = scanner.nextLine();
+			if (email.equals("0")) return;
+		}
+
+		System.out.println("Enter message body (or 0 to return to main menu):");
+		String body = scanner.nextLine();
+		if (body.equals("0")) return;
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		//TODO get timestamp
+
+		//PrivateMessage message = new PrivateMessage(timestamp.toString(), currentUser.getEmail(), email, body);
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			int result = updateDatabase("INSERT INTO PrivateMessage (time, sent_by, received_by, body) VALUES (" + 
+			                            "TIMESTAMP '" + timestamp + "','" + currentUser.getEmail() + "','" + email + "','" + body + "')");
+			if (result == 1) System.out.println("PrivateMessage sent to " + email);
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		}
 	}
 
 	private static void PostChatGroupMessage(){
 		System.out.println("Enter ChatGroup name (or 0 to return to main menu):");
-		String groupName = scanner.nextLine();
-		if (groupName.equals("0")) return;
+		String gname = scanner.nextLine();
+		if (gname.equals("0")) return;
 
-		String queryString = "SELECT * FROM GroupMember WHERE gname=" + groupName + " AND email=" + currentUser.getEmail() + ";";
-		//TODO check if GroupMember relationship is found for this (user,group) tuple
-		//TODO otherwise print error message
+		ArrayList<String> myChatGroups = getMyChatGroups();
+		while (!myChatGroups.contains(gname)){
+			System.out.println("You are not a member of this ChatGroup\n Enter another ChatGroup name (or 0 to return to main menu):");
+			gname = scanner.nextLine();
+			if (gname.equals("0")) return;
+		}
+
+		System.out.println("Enter message body (or 0 to return to main menu):");
+		String body = scanner.nextLine();
+		if (body.equals("0")) return;
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			int result = updateDatabase("INSERT INTO ChatGroupMessage (time, sent_by, gname, body) VALUES (" + 
+			                            "TIMESTAMP '" + timestamp + "','" + currentUser.getEmail() + "','" + gname + "','" + body + "')");
+			if (result == 1) System.out.println("ChatGroupMessage sent to " + gname);
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		}
 	}
 
 	private static void PostCustomMessage(){
-		//TODO
+		System.out.println("Enter recipient's email (or 0 to return to main menu):");
+		String email = scanner.nextLine();
+		if (email.equals("0")) return;
+
+		ArrayList<String> recipients = new ArrayList<String>();
+		ArrayList<String> friends = getFriends();
+
+		// Ask for recipients
+		while (recipients.isEmpty() || !email.toLowerCase().equals("done")){
+			if (recipients.isEmpty() && email.toLowerCase().equals("done")){
+				System.out.println("Enter at least one email (or 0 to return to main menu):");
+			}
+			else if (friends.contains(email)){
+				recipients.add(email);
+				System.out.println("Enter more emails, or 'done' if you're done (enter 0 to return to main menu):");
+			} 
+			else {
+				System.out.println("This user is not in your MyCircle\n Enter another email (or 0 to return to main menu):");
+			}
+
+			email = scanner.nextLine();
+			if (email.equals("0")) return;
+		}
+
+		// Ask for body
+		System.out.println("Enter message body (or 0 to return to main menu):");
+		String body = scanner.nextLine();
+		if (body.equals("0")) return;
+
+		// Ask for TopicWords
+		ArrayList<String> topics = new ArrayList<String>();
+		System.out.println("Enter a TopicWord for this message (or 0 to return to main menu):");
+		String topic = scanner.nextLine();
+		if (topic.equals("0")) return;
+		while (topics.isEmpty() || !topic.toLowerCase().equals("done")){
+			if (topics.isEmpty() && topic.toLowerCase().equals("done")){
+				System.out.println("Please enter at least one TopicWord (or 0 to return to main menu):");
+			}
+			else {
+				topics.add(topic);
+				System.out.println("Enter more TopicWords, or 'done' if you're done (enter 0 to return to main menu):");
+			} 
+
+			topic = scanner.nextLine();
+			if (topic.equals("0")) return;
+		}
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		//TODO get timestamp
+
+		//PrivateMessage message = new PrivateMessage(timestamp.toString(), currentUser.getEmail(), email, body);
+
+		ArrayList<String> existingTopicWords = getTopicWords();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = insertAndGetM_id("INSERT INTO CustomMessage (time, sent_by, body) VALUES (" + 
+			                                "TIMESTAMP '" + timestamp + "','" + currentUser.getEmail() + "','" + body + "')"); //+
+
+			String m_id = "";
+			while(rs != null && rs.next()){
+				m_id = rs.getString(1);
+			}
+
+			int result = 0;
+			String printString = "Custom Message sent to ";
+			String topicString = "    topics: ";
+
+			for (String keyword: topics){
+				if (!existingTopicWords.contains(keyword)) result = updateDatabase("INSERT INTO TopicWord (keyword) VALUES ('" + keyword + "')");
+				result = updateDatabase("INSERT INTO CustomMessage_Topic (m_id, keyword) VALUES (" + m_id + ",'" + keyword + "')");
+				topicString += keyword + ", ";
+			}
+
+			for (String recipient: recipients){
+				result = updateDatabase("INSERT INTO Message_Viewer (m_id, email) VALUES (" + m_id + ",'" + recipient + "')");
+				printString += recipient + ", ";
+			}
+			printString = printString.substring(0, printString.length()-2);
+			topicString = topicString.substring(0, topicString.length()-2);
+			if (result == 1) {
+				System.out.println(printString);
+				System.out.println(topicString);
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
 	}
 
 	private static void PostBroadcastMessage(boolean isPublic){
-		//TODO
+		System.out.println("Enter message body (or 0 to return to main menu):");
+		String body = "";
+		while (body.equals("")) body = scanner.nextLine();
+		if (body.equals("0")) return;
+
+		// Ask for TopicWords
+		ArrayList<String> topics = new ArrayList<String>();
+		System.out.println("Enter a TopicWord for this message (or 0 to return to main menu):");
+		String topic = scanner.nextLine();
+		if (topic.equals("0")) return;
+		while (topics.isEmpty() || !topic.toLowerCase().equals("done")){
+			if (topics.isEmpty() && topic.toLowerCase().equals("done")){
+				System.out.println("Please enter at least one TopicWord (or 0 to return to main menu):");
+			}
+			else {
+				topics.add(topic);
+				System.out.println("Enter more TopicWords, or 'done' if you're done (enter 0 to return to main menu):");
+			} 
+
+			topic = scanner.nextLine();
+			if (topic.equals("0")) return;
+		}
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		//TODO get timestamp
+
+		ArrayList<String> existingTopicWords = getTopicWords();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			/*int result = updateDatabase("INSERT INTO BroadcastMessage (time, sent_by, body, is_public) VALUES (" + 
+			                            "TIMESTAMP '" + timestamp + "','" + currentUser.getEmail() + "','" + body + "','" + (isPublic ? "1" : "0") + "')");*/
+
+			ResultSet rs = insertAndGetM_id("INSERT INTO BroadcastMessage (time, sent_by, body, is_public) VALUES (" + 
+			                                "TIMESTAMP '" + timestamp + "','" + currentUser.getEmail() + "','" + body + "','" + (isPublic ? "1" : "0") + "')");
+
+			String m_id = "";
+			while(rs != null && rs.next()){
+				m_id = rs.getString(1);
+			}
+
+			int result = 0;
+
+			String topicString = "    topics: ";
+			for (String keyword: topics){
+				if (!existingTopicWords.contains(keyword)) result = updateDatabase("INSERT INTO TopicWord (keyword) VALUES ('" + keyword + "')");
+				result = updateDatabase("INSERT INTO BroadcastMessage_Topic (m_id, keyword) VALUES (" + m_id + ",'" + keyword + "')");
+				topicString += keyword + ", ";
+			}
+			topicString = topicString.substring(0, topicString.length()-2);
+
+			if (result == 1) {
+				System.out.println((!isPublic ? "Message posted to friends" : "Public message posted"));
+				System.out.println(topicString);
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		}
 	}
 
 	private static void deleteMessage(){
+		ArrayList<PrivateMessage> privateMessages = getMySentPrivateMessages();
+		for (PrivateMessage pm: privateMessages){
+			System.out.println(pm.toString());
+		}
+
+		ArrayList<CustomMessage> customMessages = getMySentCustomMessages();
+		for (CustomMessage cm: customMessages){
+			System.out.println(cm.toString());
+		}
 		//TODO remove from database
 	}
 
@@ -243,6 +437,7 @@ public class BuzMo {
 		int duration;
 		try {
 			duration = scanner.nextInt();
+			scanner.nextLine();
 		} catch (InputMismatchException e){
 			duration = 7;
 		}
@@ -295,6 +490,7 @@ public class BuzMo {
 			int duration;
 			try {
 				duration = scanner.nextInt();
+				scanner.nextLine();
 			} catch (InputMismatchException e){
 				duration = 7;
 			}
@@ -311,6 +507,7 @@ public class BuzMo {
 		return null;
 	}
 	
+	// Returns a list of friends' emails
 	private static ArrayList<String> getFriends(){
 		if (currentUser == null) return null;
 		ArrayList<String> friends = new ArrayList<String>();
@@ -336,6 +533,107 @@ public class BuzMo {
 		} 
 
 		return friends;
+	}
+
+	// Returns a list of topic words
+	private static ArrayList<String> getTopicWords(){
+		ArrayList<String> topicWords = new ArrayList<String>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT keyword FROM TopicWord");
+			while(rs.next()){
+				topicWords.add(rs.getString(1));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return topicWords;
+	}
+
+	// Returns a list of my sent PrivateMessages
+	private static ArrayList<PrivateMessage> getMySentPrivateMessages(){
+		ArrayList<PrivateMessage> messages = new ArrayList<PrivateMessage>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, received_by, body FROM PrivateMessage WHERE sent_by='" + currentUser.getEmail() + "' AND sender_copy_delete=0");
+			while(rs.next()){
+				messages.add(new PrivateMessage(Integer.parseInt(rs.getString(1)), rs.getString(2), currentUser.getEmail(), rs.getString(3), rs.getString(4)));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return messages;
+	}
+
+	// Returns a list of my sent CustomMessages
+	private static ArrayList<CustomMessage> getMySentCustomMessages(){
+		ArrayList<CustomMessage> messages = new ArrayList<CustomMessage>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT m_id, time, body FROM CustomMessage WHERE sent_by='" + currentUser.getEmail() + "'");
+			while(rs.next()){
+				String m_id = rs.getString(1);
+
+				ResultSet topicRs = queryDatabase("SELECT keyword FROM CustomMessage_Topic WHERE m_id=" + m_id);
+				ArrayList<String> topics = new ArrayList<String>();
+				while (topicRs.next()){
+					topics.add(topicRs.getString(1));
+				}
+
+				ResultSet recipientRs = queryDatabase("SELECT email FROM Message_Viewer WHERE m_id=" + m_id);
+				ArrayList<String> recipients = new ArrayList<String>();
+				while (recipientRs.next()){
+					recipients.add(recipientRs.getString(1));
+				}
+
+				CustomMessage message = new CustomMessage(Integer.parseInt(m_id), rs.getString(2), currentUser.getEmail(), rs.getString(3), topics, recipients);
+				messages.add(message);
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return messages;
+	}
+
+	// Returns a list of ChatGroups' gnames currentUser is a member of
+	private static ArrayList<String> getMyChatGroups(){
+		if (currentUser == null) return null;
+		ArrayList<String> chatGroups = new ArrayList<String>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT gname FROM Group_Member" +
+			                             " WHERE email='" + currentUser.getEmail() + "'");
+			while(rs.next()){
+				chatGroups.add(rs.getString(1));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return chatGroups;
 	}
 
 	private static ArrayList<Map<String, Object>> getAllUsers(){
@@ -367,47 +665,75 @@ public class BuzMo {
 
 		return users;
 	}
-  private static ChatGroup acceptChatGroupInvite(){
-      // TODO pull all pending chatgroup invites for particular user
-      return null;
-  }
-  private static ChatGroup sendChatGroupInvite(){
-      // TODO Make sure user is in ChatGroup
-      return null;
-  }
+	private static ChatGroup acceptChatGroupInvite(){
+		// TODO pull all pending chatgroup invites for particular user
+		return null;
+	}
+	private static ChatGroup sendChatGroupInvite(){
+		// TODO Make sure user is in ChatGroup
+		return null;
+	}
 
-  private static void searchRecentMessages(){
-      // TODO ask user for set of topicwords to search
-      // default is topicwords associated with that user
-      return;
-  }
-  private static void searchUsers(){
-      // TODO ask user for emails/topicwords
-      // the email provided must have posted a message <= 7 days ago
-      return;
-  }
-    // MANAGER FUNCTIONS
-  private static void getSummaryReport(){
-      findActiveUsers();
-      findTopMessages();
-      getNumberOfInactiveUsers();
+	private static void searchRecentMessages(){
+		// TODO ask user for set of topicwords to search
+		// default is topicwords associated with that user
+		return;
+	}
+	private static void searchUsers(){
+		// TODO ask user for emails/topicwords
+		// the email provided must have posted a message <= 7 days ago
+		return;
+	}
 	
-  }
-  private static void findActiveUsers(){
-	// TODO top 3 in message counts in the last 7 days
-      return;
-  }
-  private static Message findTopMessages(){
-      //TODO top read counts in the last 7 days
-      return null;
+	// MANAGER FUNCTIONS
+	private static void getSummaryReport(){
+		findActiveUsers();
+		findTopMessages();
+		getNumberOfInactiveUsers();
+	
+	}
+	private static void findActiveUsers(){	
+		// TODO top 3 in message counts in the last 7 days
+		return;
+	}
+	private static Message findTopMessages(){
+		//TODO top read counts in the last 7 days
+		return null;
 
-  }
-  private static int getNumberOfInactiveUsers(){
-      //TODO all users with < 3 messages sent
-      return -1;
-  }
+	}
+	private static int getNumberOfInactiveUsers(){
+		//TODO all users with < 3 messages sent
+		return -1;
+	}
+	private static int updateDatabase(String sqlString){
+		// System.out.println(sqlString);
+		try{
+			Statement st = con.createStatement();
+			
+			return st.executeUpdate(sqlString);
+		}
+		catch(Exception e){
+			System.out.println("updateDatabase ERROR: " + e);
+		}
+
+		return -1;
+	}
+
+	private static ResultSet insertAndGetM_id(String sqlString){
+		try{
+			PreparedStatement pstm = con.prepareStatement(sqlString ,new String[]{"m_id"});
+			int i = pstm.executeUpdate();
+
+			if (i > 0) return pstm.getGeneratedKeys();
+		}
+		catch(Exception e){
+			System.out.println("insertAndGetM_id ERROR: " + e);
+		}
+
+		return null;
+	}
 	private static ResultSet queryDatabase(String queryString){
-		System.out.println(queryString);
+		//System.out.println(queryString);
 		try{
 			Statement st = con.createStatement();
 			

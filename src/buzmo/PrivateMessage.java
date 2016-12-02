@@ -21,6 +21,12 @@ public class PrivateMessage extends Message {
       this.sender_copy_delete = false;
       this.receiver_copy_delete = false;
     }
+    PrivateMessage(String timestamp, String sender, String receiver, String body){
+      super(timestamp, sender, body);
+      this.receiver = receiver;
+      this.sender_copy_delete = false;
+      this.receiver_copy_delete = false;
+    }
 
     void deleteSenderCopy() { this.sender_copy_delete = true; }
     void deleteReceiverCopy() { this.receiver_copy_delete = true; }

@@ -22,4 +22,9 @@ public abstract class Message {
     this.sender = sender;
     this.body = body;
   }
+  Message(String timestamp, String sender, String body){
+    this.timestamp = timestamp;
+    this.sender = sender;
+    this.body = body;
+  }
 }

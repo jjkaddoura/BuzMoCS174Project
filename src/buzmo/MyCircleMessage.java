@@ -12,11 +12,16 @@ import java.util.*;
  * @author John Mangel
  */
 public class MyCircleMessage extends Message{
-	private ArrayList<TopicWord> topics;
+	private ArrayList<String> topics;
 
-	public MyCircleMessage(int m_id, String timestamp, String sender, String body, List<TopicWord> topics){
+	public MyCircleMessage(int m_id, String timestamp, String sender, String body, List<String> topics){
     super(m_id, timestamp, sender, body);
-    this.topics = new ArrayList<TopicWord>();
+    this.topics = new ArrayList<String>();
+    this.topics.addAll(topics);
+  }
+  public MyCircleMessage(String timestamp, String sender, String body, List<String> topics){
+    super(timestamp, sender, body);
+    this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
   }
 }

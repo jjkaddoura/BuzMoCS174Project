@@ -11,10 +11,14 @@ import java.util.*;
  * @author jacob
  */
 public class CustomMessage extends MyCircleMessage{
-	private ArrayList<User> recipients;
+	private ArrayList<String> recipients;
 
-  CustomMessage(int m_id, String timestamp, String sender, String body, ArrayList<TopicWord> topics, ArrayList<User> recipients){
+  CustomMessage(int m_id, String timestamp, String sender, String body, ArrayList<String> topics, ArrayList<String> recipients){
     super(m_id, timestamp, sender, body, topics);
+    this.recipients = recipients;
+  }
+  CustomMessage(String timestamp, String sender, String body, ArrayList<String> topics, ArrayList<String> recipients){
+    super(timestamp, sender, body, topics);
     this.recipients = recipients;
   }
 }

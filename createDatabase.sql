@@ -130,8 +130,8 @@ CREATE TABLE PrivateMessage(
 	sent_by varchar(20) NOT NULL,
 	received_by varchar(20) NOT NULL,
 	body varchar(1400),
-	sender_copy_delete number(1,0),
-	receiver_copy_delete number(1,0),
+	sender_copy_delete number(1,0) DEFAULT 0,
+	receiver_copy_delete number(1,0) DEFAULT 0,
 	PRIMARY KEY(m_id),
 	FOREIGN KEY(sent_by) REFERENCES UserProfile(email) ON DELETE CASCADE,
 	FOREIGN KEY(received_by) REFERENCES UserProfile(email) ON DELETE CASCADE

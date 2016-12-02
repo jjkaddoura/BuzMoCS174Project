@@ -18,4 +18,8 @@ public class ChatGroupMessage extends Message{
     super(m_id, timestamp, sender, body);
     this.chatGroup = chatGroup;
   }
+  ChatGroupMessage(String timestamp, String sender, String body, ChatGroup chatGroup){
+    super(timestamp, sender, body);
+    this.chatGroup = chatGroup;
+  }
 }

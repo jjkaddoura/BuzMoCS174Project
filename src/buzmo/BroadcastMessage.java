@@ -11,15 +11,21 @@ import java.util.*;
  * @author jacob
  */
 public class BroadcastMessage extends MyCircleMessage{
-    private int read_count;
-    private boolean isPublic;
+		private int read_count;
+		private boolean isPublic;
 
-    BroadcastMessage(int m_id, String timestamp, String sender, String body, List<TopicWord> topics, boolean isPublic){
-      super(m_id, timestamp, sender, body, topics);
-      read_count = 0;
-      this.isPublic = isPublic;
-    }
+		BroadcastMessage(int m_id, String timestamp, String sender, String body, List<String> topics, boolean isPublic){
+			super(m_id, timestamp, sender, body, topics);
+			read_count = 0;
+			this.isPublic = isPublic;
+		}
+		BroadcastMessage(String timestamp, String sender, String body, List<String> topics, boolean isPublic){
+			super(timestamp, sender, body, topics);
+			read_count = 0;
+			this.isPublic = isPublic;
+		}
+		
 
-    public int getReadCount(){ return this.read_count; }
-    
+		public int getReadCount(){ return this.read_count; }
+		
 }
