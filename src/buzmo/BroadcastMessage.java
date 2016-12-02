@@ -33,7 +33,7 @@ public class BroadcastMessage extends MyCircleMessage{
 		for(String topic : topics){
 			o += "Topics:  " + topic + ", ";
 		}
-		if(!topics.isEmpty()) o = o.subsstring(0,o.length()-2);
+		if(!topics.isEmpty()) o = o.substring(0,o.length()-2);
 		o += isPublic ? "BuzMo public feed" : "MyCircle";
 		
 				 

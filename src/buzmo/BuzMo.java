@@ -41,29 +41,43 @@ public class BuzMo {
 		while (currentUser == null){
 			promptLoginOrRegister();
 		}
-		boolean isManager = false; // DO A QUERY HERE TO SEE IF CUR_USER IS A MANAGER
+		boolean isManager = false;
+		isManager = currentUser.is_manager;
 		int action  = -1;
 		while(action != 0){
 			if(isManager){
 				// MANAGER INTERFACE
-				System.out.println("What would you like to do?\n    (1) Post a message\n    "+
+				/*System.out.println("What would you like to do?\n    (1) Post a message\n    "+
 				                   "(2) Delete a message\n    (3) Create a ChatGroup\n    "+
 				                   "(4) Modify ChatGroup properties\n    (5) Invite a friend to a ChatGroup\n    "+
 				                   "(6) Accept a ChatGroup invite\n    (7) Search recent messages\n   "+
 				                   "(8) Search for users\n    (9) Request to join friend circle\n    "+
 				                   "(10) Find active users\n    (11) Show number of inactive users\n    "+
 				                   "(12) Find top messages\n    (13) Display complete summary report\n"+
-				                   "(0) EXIT BuzMo");
+				                   "(0) EXIT BuzMo");*/
+				System.out.println("What would you like to do?\n    (1) Enter an existing private conversation\n    "+
+				                   "(2) Start a new private conversation\n    (3) Enter MyCircle \n    "+
+				                   "(4) Enter ChatGroup\n    (5) Create new ChatGroup\n    "+
+				                   "(6) View ChatGroup invites\n    (7) Enter BuzMo Feed\n    " +
+				                   "(8) Send friend request\n    (9) Find active users\n    "+
+				                   "(10) Show number of inactive users\n    (11) Find top messages\n    "+
+				                   "(12) Display complete summary report\n    (0) EXIT BuzMo");
 			}
 			else{
 				// USER INTERFACE
-				System.out.println("What would you like to do?\n    (1) Post a message\n    "+
+				/*System.out.println("What would you like to do?\n    (1) Post a message\n    "+
 				                   "(2) Delete a message\n    (3) Create a ChatGroup\n    "+
 				                   "(4) Modify ChatGroup properties\n    (5) Invite a friend to a ChatGroup\n    "+
 				                   "(6) Accept a ChatGroup invite\n    (7) Search recent messages\n    "+
 				                   "(8) Search for users\n    (9) Request to join friend circle\n    "+
-				                   "(0) EXIT BuzMo");
+				                   "(0) EXIT BuzMo");*/
+				System.out.println("What would you like to do?\n    (1) Enter an existing private conversation\n    "+
+				                   "(2) Start a new private conversation\n    (3) Enter MyCircle \n    "+
+				                   "(4) Enter ChatGroup\n    (5) Create new ChatGroup\n    "+
+				                   "(6) View ChatGroup invites\n    (7) Enter BuzMo Feed\n    " +
+				                   "(8) Send friend request\n    (0) EXIT BuzMo");
 		  }
+
 		    
 			try{
 				String input  = scanner.nextLine();
@@ -72,9 +86,53 @@ public class BuzMo {
 			catch(Exception e){
 				System.out.println("ERROR: " + e);
 			}
-		    
-		   
+
+
 			switch(action){
+				case 1:
+					enterPrivateConversation();
+					break;
+				case 2:
+					postPrivateMessage();
+					break;
+				case 3:
+					enterMyCircle();
+					break;
+				case 4:
+					// TODO enter chat group
+					modifyChatGroup();
+					break;
+				case 5:
+					createChatGroup();
+					break;
+				case 6:
+					viewChatGroupInvites();
+					break;
+				case 7:
+					enterBuzMoFeed();
+					break;
+				case 8:
+					sendFriendRequest();
+					break;
+				case 9:
+					if(!isManager) break;
+					findActiveUsers();
+					break;
+				case 10:
+					if(!isManager) break;
+					getNumberOfInactiveUsers();
+					break;
+				case 11:
+					if(!isManager) break;
+						findTopMessages();
+					break;
+				case 12:
+					if(!isManager) break;
+					getSummaryReport();
+					break;
+			}
+		    
+			/*switch(action){
 				case 1:
 					PostMessage();
 					break;
@@ -118,7 +176,7 @@ public class BuzMo {
 					if(!isManager) break;
 					getSummaryReport();
 					break;
-			}
+			}*/
 		}
 	}
 
@@ -198,6 +256,38 @@ public class BuzMo {
 		}
 	}
 
+	private static void postMyCircleMessage(){
+		String promptMessage = "Who do you want to post to?\n    (1) for all friends\n    " + 
+		                       "(2) for certain friends\n    (3) for all BuzMo users\n    " +
+		                       "(0) to return to main menu";
+		int messageType = -1;
+
+		while (messageType < 0 || messageType > 3){
+			try {
+				System.out.println(promptMessage);
+				System.out.println("Enter 0 to return to main menu.");
+				messageType = scanner.nextInt();
+				scanner.nextLine();
+			} catch (InputMismatchException e){
+				promptMessage = "Not valid input, please enter:\n(1) for all friends\n" + 
+				                "(2) for certain friends\n(3) for all BuzMo users\n" +
+				                "(0) to return to main menu";
+			}
+		}
+		switch(messageType){
+			case 1:
+				postBroadcastMessage(false);
+				break;
+			case 2:
+				postCustomMessage();
+				break;
+			case 3:
+				postBroadcastMessage(true);
+				break;
+		}
+	}
+
+	// create new private conversation
 	private static void postPrivateMessage(){
 		System.out.println("Enter recipient's email (or 0 to return to main menu):");
 		String email = "";
@@ -211,6 +301,30 @@ public class BuzMo {
 			if (email.equals("0")) return;
 		}
 
+		System.out.println("Enter message body (or 0 to return to main menu):");
+		String body = scanner.nextLine();
+		if (body.equals("0")) return;
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		//TODO get timestamp
+
+		//PrivateMessage message = new PrivateMessage(timestamp.toString(), currentUser.getEmail(), email, body);
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			int result = updateDatabase("INSERT INTO PrivateMessage (time, sent_by, received_by, body) VALUES (" + 
+			                            "TIMESTAMP '" + timestamp + "','" + currentUser.getEmail() + "','" + email + "','" + body + "')");
+			if (result == 1) System.out.println("PrivateMessage sent to " + email);
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		}
+	}
+
+	// overload if email already selected
+	private static void postPrivateMessage(String email){
 		System.out.println("Enter message body (or 0 to return to main menu):");
 		String body = scanner.nextLine();
 		if (body.equals("0")) return;
@@ -422,7 +536,7 @@ public class BuzMo {
 		}
 	}
 
-	private static void deleteMessage(){
+	/*private static void deleteMessage(){
 		String promptMessage = "What type of message do you want to delete?\n    (1) for a private message\n    " + 
 		                       "(2) for a message to a ChatGroup\n    (3) for a message to certain friends\n    " + 
 		                       "(4) for a message to all friends\n    (5) for a public post";
@@ -459,44 +573,110 @@ public class BuzMo {
 		}
 
 		//TODO remove from database
-	}
+	}*/
 
-	private static void deletePrivateMessage(){
-		ArrayList<PrivateMessage> privateMessages = getMySentPrivateMessages();
+	private static void enterPrivateConversation(){
+		System.out.println("Enter friend's email:");
+		String email = scanner.nextLine();
+
+		ArrayList<String> friends = getFriends();
+
+		// make sure email is of a friend
+		while (!friends.contains(email)){
+			
+			// TODO check if friend request pending
+			// TODO ask to send friend request
+			System.out.println("Could not find friend. Please enter another email:");
+			email = scanner.nextLine();
+			if (email.equals("0")) return;
+		}
+
+		// get private conversation with friend
+		ArrayList<PrivateMessage> privateMessages = getPrivateConversation(email);
 		if (privateMessages.isEmpty()){
-			System.out.println("You do not have any privateMessages");
+			System.out.println("This conversation is empty. To start a new conversation, enter 2 from the main menu.");
 			return;
 		}
-		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
-		int i = 1;
-		for (PrivateMessage pm: privateMessages){
-			System.out.println("    (" + i + ") " + pm.toString());
-			i++;
-		}
 
-		int indexInput = Integer.parseInt(scanner.nextLine());
-		if (indexInput == 0) return;
-		int indexToDelete = indexInput - 1;
-		PrivateMessage messageToDelete = privateMessages.get(indexToDelete);
-		int m_idToDelete = messageToDelete.getM_id();
-
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection(url, username, password);
-			int result;
-			if (messageToDelete.deletedByReceiver()){
-				result = updateDatabase("DELETE FROM PrivateMessage WHERE m_id=" + m_idToDelete);
-			} else {
-				result = updateDatabase("UPDATE PrivateMessage SET sender_copy_delete=1 WHERE m_id=" + m_idToDelete);
+		while (true) {
+		
+			// print recent messages 7 at a time
+			int i = 1;
+			int viewingMessagesUpTo = 7;
+			int length = privateMessages.size();
+			for (PrivateMessage pm: privateMessages){
+				if (i <= viewingMessagesUpTo) {
+					System.out.println("    (" + i + ") " + pm.toString());
+					i++;
+				} else if (length > viewingMessagesUpTo){
+					System.out.println("Type 'more' to view more or 'done' to continue.");
+					String response = scanner.nextLine();
+					while (!response.toLowerCase().equals("more") && !response.toLowerCase().equals("done") && !response.equals("0")){
+						System.out.println("Please enter 'more' to view more, 'done' to continue or 0 to return to the main menu.");
+						response = scanner.nextLine();
+					}
+					boolean isDone = false;
+					switch (response.toLowerCase()) {
+						case "0":
+							return;
+						case "more":
+							viewingMessagesUpTo += 7;
+							break;
+						case "done":
+							isDone = false;
+							break;
+					}
+					if (isDone) break;
+				}
 			}
 
-			if (result == 1) System.out.println("Message successfully deleted");
-			con.close();
-		} catch (Exception e){
-			System.out.println("deletePrivateMessages ERROR");
-		}
+			// prompt user for action
+			System.out.println("To reply, enter 'reply'.");
+			System.out.println("To delete a message, enter 'delete'. (Enter 0 to return to the main menu.)");
 
-		//TODO MAYBE get only 7 most recent and scroll
+			String response = scanner.nextLine();
+			while (!response.toLowerCase().equals("reply") && !response.toLowerCase().equals("delete") && !response.equals("0")){
+				System.out.println("Invalid input. Please enter 'reply' to reply, 'delete' to delete a message, or 0 to return to the main menu.");
+				response = scanner.nextLine();
+			}
+
+			if (response.toLowerCase().equals("reply")){
+				postPrivateMessage(email);
+			}
+			else if (response.toLowerCase().equals("delete")){
+				System.out.println("Please enter the corresponding number of the message you want to delete. (Enter 0 to return to the main menu.)");
+
+				int indexInput = Integer.parseInt(scanner.nextLine());
+				if (indexInput == 0) return;
+				int indexToDelete = indexInput - 1;
+				PrivateMessage messageToDelete = privateMessages.get(indexToDelete);
+				int m_idToDelete = messageToDelete.getM_id();
+
+				try {
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+					con = DriverManager.getConnection(url, username, password);
+
+					int result;
+					if ((messageToDelete.sender.equals(email) && messageToDelete.deletedBySender()) ||
+					    (messageToDelete.receiver.equals(email) && messageToDelete.deletedByReceiver())){
+						result = updateDatabase("DELETE FROM PrivateMessage WHERE m_id=" + m_idToDelete);
+					} else {
+						result = updateDatabase("UPDATE PrivateMessage SET sender_copy_delete=1 WHERE m_id=" + m_idToDelete);
+					}
+
+					if (result == 1) System.out.println("Message successfully deleted");
+					con.close();
+				} catch (Exception e){
+					System.out.println("deletePrivateMessages(" + email + ") ERROR");
+				}
+
+			}
+			else if (response.equals("0")){
+				return;
+			}
+
+			privateMessages = getPrivateConversation(email);
+		}
 	}
 
 	// overload to delete from specific conversation
@@ -658,6 +838,11 @@ public class BuzMo {
 		//TODO MAYBE get only 7 most recent and scroll
 	}
 
+	// view chat group invites
+	private static void viewChatGroupInvites(){
+		// TODO STUB
+	}
+
 	private static void deleteCustomMessage(){
 		ArrayList<CustomMessage> customMessages = getMySentCustomMessages();
 		if (customMessages.isEmpty()){
@@ -689,20 +874,114 @@ public class BuzMo {
 		//TODO MAYBE get only 7 most recent and scroll
 	}
 
-	private static void deleteMyCircleMessage(){
-		ArrayList<MyCircleMessage> myCircleMessages = getMyCircleMessages();
-		//TODO
-		if (myCircleMessages.isEmpty()){
-			System.out.println("You do not have any customMessages");
-			return;
-		}
+	private static void enterMyCircle(){
+		ArrayList<MyCircleMessage> myCircleMessages;
+
+		while (true) {
+
+			myCircleMessages = getMyCircleMessages();
 		
+			// print recent messages 7 at a time
+			int i = 1;
+			int viewingMessagesUpTo = 7;
+			int length = myCircleMessages.size();
+			for (MyCircleMessage pm: myCircleMessages){
+				if (i <= viewingMessagesUpTo) {
+					System.out.println("    (" + i + ") " + pm.toString());
+					i++;
+				} else if (length > viewingMessagesUpTo){
+					System.out.println("Type 'more' to view more or 'done' to continue.");
+					String response = scanner.nextLine();
+					while (!response.toLowerCase().equals("more") && !response.toLowerCase().equals("done") && !response.equals("0")){
+						System.out.println("Please enter 'more' to view more, 'done' to continue or 0 to return to the main menu.");
+						response = scanner.nextLine();
+					}
+					boolean isDone = false;
+					switch (response.toLowerCase()) {
+						case "0":
+							return;
+						case "more":
+							viewingMessagesUpTo += 7;
+							break;
+						case "done":
+							isDone = false;
+							break;
+					}
+					if (isDone) break;
+				}
+			}
+
+			// prompt user for action
+			System.out.println("To post a new MyCircleMessage, enter 'post'.");
+			if (!myCircleMessages.isEmpty()) System.out.println("To delete a message, enter 'delete'. (Enter 0 to return to the main menu.)");
+			System.out.println("To return to the main menu, enter 0");
+
+			String response = scanner.nextLine();
+
+			while (!response.toLowerCase().equals("post") && !response.toLowerCase().equals("delete") && !response.equals("0")){
+				String invalidInputPrompt = "Invalid input. Please enter 'reply' to reply, ";
+					if (!myCircleMessages.isEmpty()) invalidInputPrompt += "'delete' to delete a message, ";
+					invalidInputPrompt += "or 0 to return to the main menu.";
+					System.out.println(invalidInputPrompt);
+					response = scanner.nextLine();
+			}
+
+			if (response.toLowerCase().equals("post")){
+				postMyCircleMessage();
+			}
+			else if (response.toLowerCase().equals("delete") && !myCircleMessages.isEmpty()){
+
+				System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+			
+				int indexInput = Integer.parseInt(scanner.nextLine());
+				if (indexInput == 0) return;
+				int indexToDelete = indexInput - 1;
+				MyCircleMessage messageToDelete = myCircleMessages.get(indexToDelete);
+				int m_idToDelete = messageToDelete.getM_id();
+
+				if (!messageToDelete.sender.equals(currentUser.getEmail())){
+					System.out.println("Only the sender can delete a message.");
+					return;
+				}
+				try {
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+					con = DriverManager.getConnection(url, username, password);
+
+					int result = updateDatabase("DELETE FROM CustomMessage WHERE m_id=" + m_idToDelete);
+					result += updateDatabase("DELETE FROM BroadcastMessage WHERE m_id=" + m_idToDelete);
+
+					if (result >= 1) System.out.println("Message successfully deleted");
+					con.close();
+				} catch (Exception e){
+					System.out.println("deleteMyCircleMessage ERROR");
+				}
+			}
+			else if (response.equals("0")){
+				return;
+			}
+			else {
+				String invalidInputPrompt = "Invalid input. Please enter 'reply' to reply, ";
+				if (!myCircleMessages.isEmpty()) invalidInputPrompt += "'delete' to delete a message, ";
+				invalidInputPrompt += "or 0 to return to the main menu.";
+				System.out.println(invalidInputPrompt);
+				response = scanner.nextLine();
+			}
+
+		}
+	}
+
+	private static void enterBuzMoFeed(){
+		ArrayList<BroadcastMessage> publicMessages;
+
+		publicMessages = getPublicFeed();
+	
+		// print recent messages 7 at a time
 		int i = 1;
 		int viewingMessagesUpTo = 7;
-		int length = myCircleMessages.size();
-		for (MyCircleMessage cm: myCircleMessages){
+		int length = publicMessages.size();
+		for (BroadcastMessage pm: publicMessages){
 			if (i <= viewingMessagesUpTo) {
-				System.out.println("    (" + i + ") " + cm.toString());
+				System.out.println("    (" + i + ") " + pm.toString());
 				i++;
 			} else if (length > viewingMessagesUpTo){
 				System.out.println("Type 'more' to view more or 'done' to continue.");
@@ -725,25 +1004,6 @@ public class BuzMo {
 				if (isDone) break;
 			}
 		}
-
-		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
-		int indexInput = Integer.parseInt(scanner.nextLine());
-
-		if (indexInput == 0) return;
-		int indexToDelete = indexInput - 1;
-		int m_idToDelete = myCircleMessages.get(indexToDelete).getM_id();
-
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection(url, username, password);
-			int result = updateDatabase("DELETE FROM CustomMessage WHERE m_id=" + m_idToDelete);
-			if (result == 1) System.out.println("Message successfully deleted");
-			con.close();
-		} catch (Exception e){
-			System.out.println("deleteMyCircleMessage ERROR");
-		}
-
-		//TODO MAYBE get only 7 most recent and scroll
 	}
 
 	private static void deleteBroadcastMessage(boolean isPublic){
@@ -934,9 +1194,9 @@ public class BuzMo {
 			con = DriverManager.getConnection(url,username, password);
 
 			ResultSet rs = queryDatabase("SELECT m_id, time, sent_by, body, receiver_copy_delete AS deletedByFriend FROM PrivateMessage WHERE sent_by='" + currentUser.getEmail() + 
-			                             "' AND received_by='" + friendEmail + "' AND sender_copy_delete=0" +
+			                             "' AND received_by='" + friendEmail + "' AND sender_copy_delete!=1" +
 			                             " UNION SELECT m_id, time, sent_by, body, sender_copy_delete AS deletedByFriend FROM PrivateMessage WHERE received_by='" + currentUser.getEmail() + 
-			                             "' AND sent_by='" + friendEmail + "' AND receiver_copy_delete=0" +
+			                             "' AND sent_by='" + friendEmail + "' AND receiver_copy_delete!=1" +
 			                             " ORDER BY time DESC");
 			while(rs.next()){
 				boolean sentByMe = (rs.getString(3).equals(currentUser.getEmail()));
@@ -1061,6 +1321,45 @@ public class BuzMo {
 			con.close();
 		} catch (Exception e){
 			System.out.println("getMyCircleMessages ERROR: " + e);
+		}
+
+		return messages;
+		
+	}
+
+	// Return a list of public messages to browse
+	private static ArrayList<BroadcastMessage> getPublicFeed(){
+		ArrayList<BroadcastMessage> messages = new ArrayList<BroadcastMessage>();
+
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			//TODO get timestamp
+
+			// get my posted broadcast messages
+			String sqlQuery = "SELECT m_id, sent_by, time, body FROM BroadcastMessage WHERE is_public='1' ORDER BY time DESC";
+			ResultSet rs = queryDatabase(sqlQuery);
+
+			while (rs.next()){
+				int m_id = Integer.parseInt(rs.getString(1));
+
+				// get all topics for each message
+				ResultSet topicRs = queryDatabase("SELECT keyword FROM BroadcastMessage_Topic WHERE m_id=" + m_id);
+				ArrayList<String> topics = new ArrayList<String>();
+				while (topicRs.next()){
+					topics.add(topicRs.getString(1));
+				}
+
+				// add this post to the list
+				messages.add(new BroadcastMessage(m_id, rs.getString(3), rs.getString(2), rs.getString(4), topics, true));
+			}
+
+			con.close();
+		} catch (Exception e){
+			System.out.println("getPublicFeed ERROR: " + e);
 		}
 
 		return messages;
