@@ -13,7 +13,7 @@ import java.util.*;
 public class PrivateMessage extends Message {
 	private boolean sender_copy_delete;
 	private boolean receiver_copy_delete;
-	protected String receiver;
+	private String receiver;
 
 	PrivateMessage(int m_id, String timestamp, String sender, String receiver, String body){
 		super(m_id, timestamp, sender, body);
@@ -46,7 +46,9 @@ public class PrivateMessage extends Message {
 
 	@Override
 	public String toString(){
-		String o = sender + "------>" + receiver + "\nText: " + body + "\n" + "Time: " + timestamp;
+		String o = sender + "------>" + receiver + "\n 		Text:		" + body + "\n" + " 		Time:" + timestamp;
+
+
 		return o;
 	}
 }

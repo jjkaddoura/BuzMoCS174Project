@@ -29,12 +29,13 @@ public class BroadcastMessage extends MyCircleMessage{
 
 	@Override
 		public String toString(){
-			String o = sender + ":  " + body + "\n Time: " + timestamp + "\n";
+			String o = isPublic ? "BuzMo public feed\n 		" : "MyCircle\n 		";
+			 o += sender + ":  " + body + "\n 		Time: " + timestamp + "\n 		";
 		for(String topic : topics){
 			o += "Topics:  " + topic + ", ";
 		}
-		if(!topics.isEmpty()) o = o.substring(0,o.length()-2);
-		o += isPublic ? "BuzMo public feed" : "MyCircle";
+		if(!topics.isEmpty()) o = o.subsstring(0,o.length()-2);
+		
 		
 				 
 		return o;

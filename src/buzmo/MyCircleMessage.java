@@ -21,7 +21,7 @@ public class MyCircleMessage extends Message{
     this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
 
-    this.recipients = new ArrayList<String>();
+    this.receipients = new ArrayList<String>();
     isPublic = false;
   }
   public MyCircleMessage(String timestamp, String sender, String body, List<String> topics){
@@ -29,17 +29,17 @@ public class MyCircleMessage extends Message{
     this.topics = new ArrayList<String>();
     this.topics.addAll(topics);
 
-    this.recipients = new ArrayList<String>();
+    this.receipients = new ArrayList<String>();
     isPublic = false;
   }
    @Override
    public String toString(){
-    String o = isPublic ? "BuzMo Public Feed\n" : "MyCircle\n";
-    o = sender + ":  " + body + "\n Time: " + timestamp + "\n";
+    String o = isPublic ? "BuzMo Public Feed\n" : "MyCircle\n     ";
+    o = sender + ":  " + body + "\n     Time: " + timestamp + "\n     ";
     for(String topic : topics){
       o += "Topics:  " + topic + ", ";
     }
-    if(!topics.isEmpty()) o = o.substring(0,o.length()-2);
+    if(!topics.isEmpty()) o = o.subsstring(0,o.length()-2);
     
          
     return o;

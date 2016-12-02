@@ -24,15 +24,17 @@ public class CustomMessage extends MyCircleMessage{
 	
 	@Override
 	public String toString(){
-			String o = sender + ":  " + body + "\n Time: " + timestamp + "\n";
+			String o = " 		" +sender + ":  " + body + "\n 		Time: " + timestamp + "\n 		";
 		for(String topic : topics){
 			o += "Topics:  " + topic + ", ";
+
 		}
-		if(!topics.isEmpty()) o = o.substring(0,o.length()-2);
+		if(!topics.isEmpty()) o = o.subsstring(0,o.length()-2);
+		o += "\n 		";
 		for(String rec : recipients){
 			o += "recipients: " + rec + ", ";
 		}
-		if(!recipients.isEmpty()) o = o.substring(0,o.length()-2);
+		if(!recipients.isEmpty()) o = o.subsstring(0,o.length()-2);
 		return o;
 	} 
 }

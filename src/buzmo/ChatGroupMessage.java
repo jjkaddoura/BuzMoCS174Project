@@ -25,7 +25,7 @@ public class ChatGroupMessage extends Message{
 
   @Override
 	public String toString(){
-		String o = sender + ": " + body + "\n Time: " + timestamp;
+		String o = sender + ": " + body + "\n     Time: " + timestamp;
 		return o;
 	}
 }
