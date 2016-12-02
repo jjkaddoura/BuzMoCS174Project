@@ -52,7 +52,7 @@ public class User {
   }
 
   public String getEmail(){
-  	return this.screenname;
+  	return this.email;
   }
 
   public void setEmail(String email){

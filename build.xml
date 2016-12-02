@@ -30,7 +30,7 @@
   </target>
 
   <target name="clean" description="Delete non-source files">
-    <delete failonerror="false" verbose="true">
+    <delete failonerror="false" verbose="true" quiet="true">
       <fileset dir="build" includes="**/*.class"/>
 			<fileset dir="src" includes="**/*.class"/>
     </delete>

@@ -9,12 +9,13 @@ import java.util.*;
 import java.lang.*;
 import java.sql.*;
 
+//import org.skife.jdbi.*;
+
 /**
  *
  * @author jacob
  */
 public class BuzMo {
-
 	private static User currentUser;
 	private static Scanner scanner;
 	 
@@ -30,20 +31,33 @@ public class BuzMo {
 	 */
 	public static void main(String[] args) {
 		scanner = new Scanner(System.in);
-		//set up database connection
-		try{
-			Class.forName("oracle.jdbc.driver.OracleDriver"); 
-			con = DriverManager.getConnection(url,username, password);
-		} catch (Exception e){
-			System.out.println("ERROR: " + e);
+
+		System.out.println("Welcome to BuzMo!");
+
+		// Print all users REMOVE THIS CODE
+		ArrayList<Map<String, Object>> allUsers = getAllUsers();
+		for (Map user: allUsers){
+			// Print all column values
+			for (Object key: user.keySet()){
+				System.out.print(user.get(key) + " ");
+			}
+			System.out.println();
+
+			// Print only email
+			//System.out.println(user.get("EMAIL"));
 		}
 
-		
-		System.out.println("Welcome to BuzMo!");
-		// Login or register
-		promptLoginORRegister();
-		
-		
+		// Print Kevin Durant's friends REMOVE THIS CODE
+		currentUser = new User("Kevin Durant", "DurantKev@gmail.com", "password", false, null);
+		ArrayList<String> kevsFriends = getFriends();
+		for (String email: kevsFriends){
+			System.out.println(email);
+		}
+
+		// TODO code application logic here
+
+		promptLoginOrRegister();
+
 		int action  = -1;
 		while(action != 0){
 			System.out.println("What would you like to do?\n   (1) Post a message\n   "+
@@ -83,53 +97,28 @@ public class BuzMo {
 				break;
 			}
 		}
-		ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
-		try {
-			while(rs.next()){
-				System.out.println(rs.getString(1) + " " +
-				                   rs.getString(2) + " " +
-				                   rs.getString(3) + " " +
-				                   rs.getString(4) + " " +
-				                   rs.getString(5) + " " +
-				                   (rs.getInt(6)==1 ? "Y" : "N"));
-			}
-		} catch (Exception e) {
-			System.out.println("ERROR: " + e);
-		}
-
-	
-		// TODO code application logic here
-
-
-		//close connection
-		try{
-			con.close();
-		} catch (Exception e){
-			System.out.println("ERROR closing connection: " + e);
-		}
-		
 	}
 
-
 	// LOGIN OR REGISTER TO BUZMO 
-	private static void promptLoginORRegister(){
-		String answer = " ";
+	private static void promptLoginOrRegister(){
+		String answer = "";
 		System.out.println("Already have an account? (y/n)");
 		while(!answer.toLowerCase().equals("y") && !answer.toLowerCase().equals("n")){
 			System.out.println("Please enter 'y' to login or 'n' to register.");
 			answer = scanner.nextLine();
 		}
+
 		System.out.println("Email:");
 		String username = scanner.nextLine();
 		System.out.println("Password:");
 		String password = scanner.nextLine();
+
 		if(answer.equals("y")){
-			//TODO validate
+			//TODO validate and set currentUser
 			System.out.println("Logged in.");
 		}
 		else{
-			// INSERT NEW USER TO DATABASE
-
+			// TODO INSERT NEW USER TO DATABASE and set currentUser
 			System.out.println("Congratulations! You have been successfully registered to BuzMo!");
 		}
 	}
@@ -283,8 +272,66 @@ public class BuzMo {
 		//TODO make sure friend request doesn't exist either direction
 		return null;
 	}
+	
+	private static ArrayList<String> getFriends(){
+		if (currentUser == null) return null;
+		ArrayList<String> friends = new ArrayList<String>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT UserProfile.email, UserProfile.name FROM UserProfile" +
+			                             " JOIN Friendship ON UserProfile.email=Friendship.initiator" + 
+			                             " WHERE is_pending=0 AND receiver='" + currentUser.getEmail() + "'" +
+			                             
+			                             " UNION SELECT UserProfile.email, UserProfile.name FROM UserProfile" +
+			                             " JOIN Friendship ON UserProfile.email=Friendship.receiver" + 
+			                             " WHERE is_pending=0 AND initiator='" + currentUser.getEmail() + "'");
+			while(rs.next()){
+				friends.add(rs.getString(1));
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return friends;
+	}
+
+	private static ArrayList<Map<String, Object>> getAllUsers(){
+		ArrayList<Map<String, Object>> users = new ArrayList<Map<String, Object>>();
+
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver"); 
+			con = DriverManager.getConnection(url,username, password);
+
+			ResultSet rs = queryDatabase("SELECT * FROM UserProfile");
+
+			ResultSetMetaData metaData = rs.getMetaData();
+			int columnCount = metaData.getColumnCount();
+
+			while (rs.next()) {
+				Map<String, Object> columns = new LinkedHashMap<String, Object>();
+
+				for (int i = 1; i <= columnCount; i++) {
+					columns.put(metaData.getColumnLabel(i), rs.getObject(i));
+				}
+
+				users.add(columns);
+			}
+
+			con.close();
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e);
+		} 
+
+		return users;
+	}
 
 	private static ResultSet queryDatabase(String queryString){
+		System.out.println(queryString);
 		try{
 			Statement st = con.createStatement();
 			
@@ -293,7 +340,7 @@ public class BuzMo {
 			return rt;
 			}
 		catch(Exception e){
-			System.out.println(e);
+			System.out.println("executeQuery ERROR: " + e);
 		}
 
 		return null;
