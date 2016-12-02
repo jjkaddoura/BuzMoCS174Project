@@ -11,30 +11,30 @@ import java.util.*;
  * @author jacob
  */
 public class PrivateMessage extends Message {
-		private boolean sender_copy_delete;
-		private boolean receiver_copy_delete;
-		private String receiver;
+	private boolean sender_copy_delete;
+	private boolean receiver_copy_delete;
+	private String receiver;
 
-		PrivateMessage(int m_id, String timestamp, String sender, String receiver, String body){
-			super(m_id, timestamp, sender, body);
-			this.receiver = receiver;
-			this.sender_copy_delete = false;
-			this.receiver_copy_delete = false;
-		}
-		PrivateMessage(String timestamp, String sender, String receiver, String body){
-			super(timestamp, sender, body);
-			this.receiver = receiver;
-			this.sender_copy_delete = false;
-			this.receiver_copy_delete = false;
-		}
+	PrivateMessage(int m_id, String timestamp, String sender, String receiver, String body){
+		super(m_id, timestamp, sender, body);
+		this.receiver = receiver;
+		this.sender_copy_delete = false;
+		this.receiver_copy_delete = false;
+	}
+	PrivateMessage(String timestamp, String sender, String receiver, String body){
+		super(timestamp, sender, body);
+		this.receiver = receiver;
+		this.sender_copy_delete = false;
+		this.receiver_copy_delete = false;
+	}
 
-		void deleteSenderCopy() { this.sender_copy_delete = true; }
-		void deleteReceiverCopy() { this.receiver_copy_delete = true; }
+	void deleteSenderCopy() { this.sender_copy_delete = true; }
+	void deleteReceiverCopy() { this.receiver_copy_delete = true; }
 
-		@Override
-		String toString(){
-			String o = m_id  + ", " + timestamp + ", " + sender + ", " + body;
-			o =  o + ", " + receiver;
-			return o;
-		}
+	@Override
+	public String toString(){
+		String o = m_id  + ", " + timestamp + ", " + sender + ", " + body;
+		o =  o + ", " + receiver;
+		return o;
+	}
 }

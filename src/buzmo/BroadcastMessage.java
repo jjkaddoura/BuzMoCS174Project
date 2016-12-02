@@ -11,31 +11,32 @@ import java.util.*;
  * @author jacob
  */
 public class BroadcastMessage extends MyCircleMessage{
-		private int read_count;
-		private boolean isPublic;
+	private int read_count;
+	private boolean isPublic;
 
-		BroadcastMessage(int m_id, String timestamp, String sender, String body, List<String> topics, boolean isPublic){
-			super(m_id, timestamp, sender, body, topics);
-			read_count = 0;
-			this.isPublic = isPublic;
-		}
-		BroadcastMessage(String timestamp, String sender, String body, List<String> topics, boolean isPublic){
-			super(timestamp, sender, body, topics);
-			read_count = 0;
-			this.isPublic = isPublic;
-		}
-		
-    public int getReadCount(){ return this.read_count; }
-    @Override
-    String toString(){
-	String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
-	for(String topic : topics){
-	    o += ", topics: " + topic + ", ";
+	BroadcastMessage(int m_id, String timestamp, String sender, String body, List<String> topics, boolean isPublic){
+		super(m_id, timestamp, sender, body, topics);
+		read_count = 0;
+		this.isPublic = isPublic;
 	}
-	o += ", " + isPublic;
+	BroadcastMessage(String timestamp, String sender, String body, List<String> topics, boolean isPublic){
+		super(timestamp, sender, body, topics);
+		read_count = 0;
+		this.isPublic = isPublic;
+	}
 	
-       
-	return o;
-    }
+	public int getReadCount(){ return this.read_count; }
+
+	@Override
+	public String toString(){
+		String o =  m_id  + ", " + timestamp + ", " + sender + ", " +body;
+		for(String topic : topics){
+			o += "topics: " + topic + ", ";
+		}
+		o += isPublic ? "public" : "MyCircle";
+		
+				 
+		return o;
+	}
 		
 }

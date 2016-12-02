@@ -12,14 +12,21 @@ import java.util.*;
  * @author John Mangel
  */
 public class ChatGroupMessage extends Message{
-	private String chatGroup;
+	private String gname;
 
-	ChatGroupMessage(int m_id, String timestamp, String sender, String body, String chatGroup){
+	ChatGroupMessage(int m_id, String timestamp, String sender, String body, String gname){
     super(m_id, timestamp, sender, body);
-    this.chatGroup = chatGroup;
+    this.gname = gname;
   }
-  ChatGroupMessage(String timestamp, String sender, String body, String chatGroup){
+  ChatGroupMessage(String timestamp, String sender, String body, String gname){
     super(timestamp, sender, body);
-    this.chatGroup = chatGroup;
+    this.gname = gname;
   }
+
+  @Override
+	public String toString(){
+		String o = m_id  + ", " + timestamp + ", " + sender + ", " + body;
+		o =  o + ", " + gname;
+		return o;
+	}
 }

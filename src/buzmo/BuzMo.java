@@ -175,24 +175,24 @@ public class BuzMo {
 		}
 		switch(messageType){
 			case 1:
-				PostPrivateMessage();
+				postPrivateMessage();
 				break;
 			case 2:
-				PostChatGroupMessage();
+				postChatGroupMessage();
 				break;
 			case 3:
-				PostCustomMessage();
+				postCustomMessage();
 				break;
 			case 4:
-				PostBroadcastMessage(false);
+				postBroadcastMessage(false);
 				break;
 			case 5:
-				PostBroadcastMessage(true);
+				postBroadcastMessage(true);
 				break;
 		}
 	}
 
-	private static void PostPrivateMessage(){
+	private static void postPrivateMessage(){
 		System.out.println("Enter recipient's email (or 0 to return to main menu):");
 		String email = "";
 		while (email.equals("")) email = scanner.nextLine();
@@ -227,7 +227,7 @@ public class BuzMo {
 		}
 	}
 
-	private static void PostChatGroupMessage(){
+	private static void postChatGroupMessage(){
 		System.out.println("Enter ChatGroup name (or 0 to return to main menu):");
 		String gname = scanner.nextLine();
 		if (gname.equals("0")) return;
@@ -257,7 +257,7 @@ public class BuzMo {
 		}
 	}
 
-	private static void PostCustomMessage(){
+	private static void postCustomMessage(){
 		System.out.println("Enter recipient's email (or 0 to return to main menu):");
 		String email = scanner.nextLine();
 		if (email.equals("0")) return;
@@ -351,7 +351,7 @@ public class BuzMo {
 		} 
 	}
 
-	private static void PostBroadcastMessage(boolean isPublic){
+	private static void postBroadcastMessage(boolean isPublic){
 		System.out.println("Enter message body (or 0 to return to main menu):");
 		String body = "";
 		while (body.equals("")) body = scanner.nextLine();
@@ -417,27 +417,161 @@ public class BuzMo {
 	}
 
 	private static void deleteMessage(){
-		ArrayList<PrivateMessage> privateMessages = getMySentPrivateMessages();
-		for (PrivateMessage pm: privateMessages){
-			System.out.println(pm.toString());
+		String promptMessage = "What type of message do you want to delete?\n    (1) for a private message\n    " + 
+		                       "(2) for a message to a ChatGroup\n    (3) for a message to certain friends\n    " + 
+		                       "(4) for a message to all friends\n    (5) for a public post";
+		int messageType = -1;
+
+		while (messageType < 0 || messageType > 5){
+			try {
+				System.out.println(promptMessage);
+				System.out.println("Enter 0 to return to main menu.");
+				messageType = scanner.nextInt();
+				scanner.nextLine();
+			} catch (InputMismatchException e){
+				promptMessage = "Not valid input, please enter:\n(1) for a private message\n" + 
+				                "(2) for a message to a ChatGroup\n(3) for a message to certain friends\n" + 
+				                "(4) for a message to all friends\n(5) for a public post";
+			}
+		}
+		switch(messageType){
+			case 1:
+				deletePrivateMessage();
+				break;
+			case 2:
+				deleteChatGroupMessage();
+				break;
+			case 3:
+				deleteCustomMessage();
+				break;
+			case 4:
+				deleteBroadcastMessage(false);
+				break;
+			case 5:
+				deleteBroadcastMessage(true);
+				break;
 		}
 
-		ArrayList<CustomMessage> customMessages = getMySentCustomMessages();
-		for (CustomMessage cm: customMessages){
-			System.out.println(cm.toString());
-		}
-
-		ArrayList<BroadcastMessage> broadcastMessages = getMySentBroadcastMessages();
-		for (BroadcastMessage bm: broadcastMessages){
-			System.out.println(bm.toString());
-		}
-
-		ArrayList<ChatGroupMessage> chatGroupMessages = getMySentChatGroupMessages();
-		for (ChatGroupMessage gm: chatGroupMessages){
-			System.out.println(gm.toString());
-		}
 		//TODO remove from database
 	}
+
+	private static void deletePrivateMessage(){
+		ArrayList<PrivateMessage> privateMessages = getMySentPrivateMessages();
+		if (privateMessages.isEmpty()){
+			System.out.println("You do not have any privateMessages");
+			return;
+		}
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+		int i = 1;
+		for (PrivateMessage pm: privateMessages){
+			System.out.println("    (" + i + ") " + pm.toString());
+			i++;
+		}
+
+		int indexInput = Integer.parseInt(scanner.nextLine());
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		int m_idToDelete = privateMessages.get(indexToDelete).getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+			int result = updateDatabase("DELETE FROM PrivateMessage WHERE m_id=" + m_idToDelete);
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deletePrivateMessages ERROR");
+		}
+	}
+
+	private static void deleteChatGroupMessage(){
+		ArrayList<ChatGroupMessage> chatGroupMessages = getMySentChatGroupMessages();
+		if (chatGroupMessages.isEmpty()){
+			System.out.println("You do not have any chatGroupMessages");
+			return;
+		}
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+		int i = 1;
+		for (ChatGroupMessage gm: chatGroupMessages){
+			System.out.println("    (" + i + ") " + gm.toString());
+			i++;
+		}
+
+		int indexInput = Integer.parseInt(scanner.nextLine());
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		int m_idToDelete = chatGroupMessages.get(indexToDelete).getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+			int result = updateDatabase("DELETE FROM ChatGroupMessage WHERE m_id=" + m_idToDelete);
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deleteChatGroupMessages ERROR");
+		}
+
+	}
+
+	private static void deleteCustomMessage(){
+		ArrayList<CustomMessage> customMessages = getMySentCustomMessages();
+		if (customMessages.isEmpty()){
+			System.out.println("You do not have any customMessages");
+			return;
+		}
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+		int i = 1;
+		for (CustomMessage cm: customMessages){
+			System.out.println("    (" + i + ") " + cm.toString());
+			i++;
+		}
+
+		int indexInput = Integer.parseInt(scanner.nextLine());
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		int m_idToDelete = customMessages.get(indexToDelete).getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+			int result = updateDatabase("DELETE FROM CustomMessage WHERE m_id=" + m_idToDelete);
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deleteCustomMessages ERROR");
+		}
+	}
+
+	private static void deleteBroadcastMessage(boolean isPublic){
+		ArrayList<BroadcastMessage> broadcastMessages = getMySentBroadcastMessages(isPublic);
+		if (broadcastMessages.isEmpty()){
+			System.out.println("You do not have any broadcastMessages");
+			return;
+		}
+		System.out.println("Enter the corresponding number to the message you want to delete. (Enter 0 to return to the main menu.)");
+		int i = 1;
+		for (BroadcastMessage bm: broadcastMessages){
+			System.out.println("    (" + i + ") " + bm.toString());
+			i++;
+		}
+
+		int indexInput = Integer.parseInt(scanner.nextLine());
+		if (indexInput == 0) return;
+		int indexToDelete = indexInput - 1;
+		int m_idToDelete = broadcastMessages.get(indexToDelete).getM_id();
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(url, username, password);
+			int result = updateDatabase("DELETE FROM BroadcastMessage WHERE m_id=" + m_idToDelete);
+			if (result == 1) System.out.println("Message successfully deleted");
+			con.close();
+		} catch (Exception e){
+			System.out.println("deleteBroadcastMessages ERROR");
+		}
+	}
+
 
 	private static ChatGroup createChatGroup(){
 		System.out.println("Name your chatgroup:");
@@ -609,14 +743,14 @@ public class BuzMo {
 	}
 
 	// Returns a list of my sent BroadCastMessages
-	private static ArrayList<BroadcastMessage> getMySentBroadcastMessages(){
+	private static ArrayList<BroadcastMessage> getMySentBroadcastMessages(boolean isPublic){
 		ArrayList<BroadcastMessage> messages = new ArrayList<BroadcastMessage>();
 
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver"); 
 			con = DriverManager.getConnection(url,username, password);
 
-			ResultSet rs = queryDatabase("SELECT m_id, time, body, is_public FROM BroadCastMessage WHERE sent_by='" + currentUser.getEmail() + "'");
+			ResultSet rs = queryDatabase("SELECT m_id, time, body, is_public FROM BroadCastMessage WHERE sent_by='" + currentUser.getEmail() + "' AND is_public=" + (isPublic ? 1 : 0));
 			while(rs.next()){
 				String m_id = rs.getString(1);
 

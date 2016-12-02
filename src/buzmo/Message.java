@@ -29,6 +29,9 @@ public class Message {
     this.body = body;
   }
 
+  public int getM_id(){
+    return this.m_id;
+  }
      
     
 }
