@@ -31,7 +31,7 @@ CREATE TABLE UserProfile(
 	phone_num char(10),
 	password varchar(10) NOT NULL,
 	screenname varchar(20),
-	is_manager number(1,0),
+	is_manager number(1,0) DEFAULT 0,
 	PRIMARY KEY(email),
 	UNIQUE(screenname)
 );
